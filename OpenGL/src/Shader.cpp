@@ -9,19 +9,28 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::ShaderProgram(std::vector<ShaderInfo> &shaders)
 {
-	GLuint program = glCreateProgram();
+	m_programID = glCreateProgram();
 
 
 	for (ShaderInfo &shaderEntry : shaders)
 	{
 		shaderEntry.shaderID = compileShader(shaderEntry.type, parseShader(shaderEntry.filePath));
 
-		glAttachShader(program, shaderEntry.shaderID);
+		glAttachShader(m_programID, shaderEntry.shaderID);
 
 	}
 
-	glLinkProgram(program);
-	glValidateProgram(program);
+	glLinkProgram(m_programID);
+	glValidateProgram(m_programID);
+
+	int success{ 0 };
+#ifdef _DEBUG
+	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		std::cout << "Not linked " << std::endl; //TODO
+	}
+#endif //DEBUG
 
 	for (ShaderInfo& shaderEntry : shaders)
 	{
@@ -50,23 +59,27 @@ const std::string ShaderProgram::parseShader(std::string filePath)
 
 	std::string result;
 
+#ifdef _DEBUG
 	if (!file)
 	{
-#ifdef _DEBUG
 		std::cout << "cannot parse some shader" << std::endl; //TODO
-#endif // DEBUG
 	}
+#endif // DEBUG
 
 	std::string line;
 	while (std::getline(file, line))
 	{
 		result = result + line + "\n";
 	}
+
+	std::cout << result;
+
+	file.close();
 	
 	return result;
 }
 
-GLuint ShaderProgram::compileShader(const unsigned int& type, const std::string& source)
+GLuint ShaderProgram::compileShader(GLenum &type, const std::string& source)
 {
 	GLuint shader = glCreateShader(type);
 	const char* src = source.c_str();

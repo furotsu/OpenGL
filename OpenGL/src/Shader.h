@@ -9,13 +9,13 @@
 typedef struct
 {
 	GLenum type;
-	const char* filePath;
+	std::string filePath;
 	GLuint shaderID;
 } ShaderInfo;
 
 class ShaderProgram
 {
-private:
+public: // CHANGE
 	unsigned int m_programID;
 	std::string m_shaderSource;
 	std::map<std::string, int> m_uniformLocation;
@@ -30,5 +30,5 @@ public:
 
 private:
 	const std::string parseShader(std::string filePath); //TODO how not to copy local string??
-	GLuint compileShader(const unsigned int &type, const std::string &source);
+	GLuint compileShader(GLenum &type, const std::string &source);
 };
