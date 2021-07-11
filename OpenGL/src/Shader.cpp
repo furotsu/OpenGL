@@ -72,7 +72,6 @@ const std::string ShaderProgram::parseShader(std::string filePath)
 		result = result + line + "\n";
 	}
 
-	std::cout << result;
 
 	file.close();
 	
@@ -91,11 +90,19 @@ GLuint ShaderProgram::compileShader(GLenum &type, const std::string& source)
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 
+#ifdef _DEBUG
 	if (result == GL_FALSE)
 	{
-#ifdef _DEBUG
-		// TODO
-#endif // DEBUG
+		GLint length{ 0 };
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)alloca(length * sizeof(char));
+
+		glGetShaderInfoLog(shader, length, &length, message);
+		std::cout << message << std::endl;
+
+		glDeleteShader(shader);
+		return 0;
 	}
+#endif // DEBUG
 	return shader;
 }
