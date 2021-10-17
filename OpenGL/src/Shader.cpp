@@ -106,3 +106,63 @@ GLuint ShaderProgram::compileShader(GLenum &type, const std::string& source)
 #endif // DEBUG
 	return shader;
 }
+
+void ShaderProgram::SetUniform1i(const std::string& name, GLint value)
+{
+	glUniform1i(getUniformLocation(name), value);
+}
+
+void ShaderProgram::SetUniform1f(const std::string& name, GLfloat value)
+{
+	glUniform1f(getUniformLocation(name), value);
+}
+
+void ShaderProgram::SetUniform3f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2)
+{
+	glUniform3f(getUniformLocation(name), v0, v1, v2);
+}
+
+void ShaderProgram::SetUniform4f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+{
+	glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
+}
+
+void ShaderProgram::SetUniformMat4f(const std::string& name, glm::mat4& matrix)
+{
+	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
+}
+/*
+void ShaderProgram::DrawUniforms()
+{
+	GLint count;
+	GLint i;
+	const GLsizei bufSize = 16;
+	GLchar name1[bufSize];
+	GLsizei length;
+	GLint size;
+	GLenum type;
+	glGetProgramiv(m_RendererID, GL_ACTIVE_UNIFORMS, &count);
+	std::cout << "Active shaders: " << count << std::endl;
+	for (int i = 0; i < count; i++)
+	{
+		glGetActiveUniform(m_RendererID, (GLuint)i, bufSize, &length, &size, &type, name1);
+
+		std::cout << i << "   " << type << "  " << name1 << " | " << std::endl;
+
+	}
+}
+*/
+GLint ShaderProgram::getUniformLocation(const std::string& name)
+{
+	if (m_uniformLocation.find(name) != m_uniformLocation.end())
+		return m_uniformLocation[name];
+
+	int location = glGetUniformLocation(m_programID, name.c_str());
+	if (location == -1)
+		std::cout << "Location allocation error lol: " << name << std::endl;
+
+	m_uniformLocation[name] = location;
+	return location;
+}
+
+

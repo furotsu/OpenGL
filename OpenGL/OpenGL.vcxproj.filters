@@ -17,6 +17,8 @@
   <ItemGroup>
     <None Include="res\shaders\fragment.shader" />
     <None Include="res\shaders\vertex.shader" />
+    <None Include="res\shaders\fragmentLight.shader" />
+    <None Include="res\shaders\vertexLight.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

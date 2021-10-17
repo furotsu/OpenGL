@@ -1,10 +1,12 @@
 #pragma once
 
 #include <GL/glew.h>
+#include "vendor/glm/glm.hpp"
 
 #include <string>
 #include <map>
 #include <vector>
+#include <sstream>
 
 typedef struct
 {
@@ -27,8 +29,19 @@ public:
 
 	void Bind() const;
 	void Unbind() const;
-
 private:
 	const std::string parseShader(std::string filePath); //TODO how not to copy local string??
 	GLuint compileShader(GLenum &type, const std::string &source);
+public:
+	void SetUniform1i(const std::string&, GLint);
+	void SetUniform1f(const std::string&, GLfloat);
+	void SetUniform3f(const std::string&, GLfloat, GLfloat, GLfloat);
+	void SetUniform4f(const std::string&, GLfloat, GLfloat, GLfloat, GLfloat);
+	void SetUniformMat4f(const std::string&, glm::mat4&);
+
+	//void drawUniforms();
+
+private:
+	GLint getUniformLocation(const std::string& name);
+
 };

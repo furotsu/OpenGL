@@ -13,9 +13,14 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
 	updateVectors();
 }
 
-glm::mat4 Camera::getViewMatrix()
+glm::mat4& Camera::getViewMatrix()
 {
 	return m_viewMatrix;
+}
+
+glm::vec3 Camera::getPosition() const
+{
+	return m_position;
 }
 
 void Camera::moveCamera(MoveDirection direction, float deltaTime)
@@ -28,6 +33,8 @@ void Camera::moveCamera(MoveDirection direction, float deltaTime)
 	 m_position -= m_speed * deltaTime * m_right;
 	if (direction == MoveDirection::RIGHT)
 	 m_position += m_speed * deltaTime * m_right;
+
+	updateVectors();
 }
 
 void Camera::rotateCamera(float xoffset, float yoffset, GLboolean constrainPitch = true)

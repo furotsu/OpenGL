@@ -36,10 +36,12 @@ public:
 
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw = YAW, float pitch = PITCH);
 
-	glm::mat4 getViewMatrix();
+	glm::mat4& getViewMatrix();
+	glm::vec3 getPosition() const;
 
 	void moveCamera(MoveDirection direction, float deltaTime);
 	void rotateCamera(float, float, GLboolean);
+	
 
 private:
 	void updateVectors();
