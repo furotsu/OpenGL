@@ -2,6 +2,9 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "Texture.h"
+
+#include <string>
 
 #include <vector>
 
@@ -21,6 +24,8 @@ private:
 	GLuint m_EBO;
 	GLuint m_attribIndex;
 
+	Texture m_texture;
+
 	GLuint m_Size;
 
 	GLenum m_drawMode;
@@ -28,11 +33,14 @@ private:
 public:
 	Model();
 	Model(const void *vertices, GLuint vSize, GLuint attribIndex, GLenum drawMode = GL_TRIANGLES);
+	Model(const void* vertices, GLuint vSize, GLuint attribIndex, std::string textureFilePath, GLenum drawMode = GL_TRIANGLES);
 	Model(const void *vertices, GLuint vSize, const void *indices, GLuint iSize, GLuint attribIndex, GLenum drawMode = GL_TRIANGLES);
 	Model(const Model& p1);
 
 	void setData();
 
+	void bindTexture();
+	
 	bool isIndexed() const noexcept;
 
 	GLuint getVAO() const noexcept;

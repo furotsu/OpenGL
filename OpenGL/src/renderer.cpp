@@ -23,6 +23,8 @@ void Renderer::draw(ShaderProgram& program, Model& model) const
 	}*/
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.getEBO());
 	glBindVertexArray(model.getVAO());
+//	glBindTexture(GL_TEXTURE_2D, model.getTBO());
+	model.bindTexture();
 	program.Bind();
 
 	if (model.isIndexed())

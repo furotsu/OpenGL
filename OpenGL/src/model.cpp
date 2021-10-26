@@ -1,10 +1,38 @@
 #include "model.h"
+#include "vendor/stb_image/stb_image.h"
+
 #include <iostream>
+#include <utility>
+
 Model::Model()
 {
 }
 
 Model::Model(const void *vertices, GLuint vSize, GLuint attribIndex, GLenum drawMode)
+	:m_attribIndex(attribIndex), m_Size(vSize), m_indexed(GL_FALSE), m_drawMode(drawMode), m_EBO(0)
+{
+
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(1, &m_VBO);
+
+	glBindVertexArray(m_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vSize * 8, vertices, GL_STATIC_DRAW);
+	std::cout << sizeof(float) * vSize << std::endl;
+	glVertexAttribPointer(attribIndex, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(attribIndex);
+
+	//normal values
+	glVertexAttribPointer(attribIndex + 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(attribIndex + 1);
+
+	m_texture = Texture();
+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
+}
+Model::Model(const void *vertices, GLuint vSize, GLuint attribIndex, std::string textureFileName, GLenum drawMode)
 	:m_attribIndex(attribIndex), m_Size(vSize), m_indexed(GL_FALSE), m_drawMode(drawMode), m_EBO(0)
 {
 	glGenVertexArrays(1, &m_VAO);
@@ -13,16 +41,20 @@ Model::Model(const void *vertices, GLuint vSize, GLuint attribIndex, GLenum draw
 	glBindVertexArray(m_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vSize * 6, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vSize * 8, vertices, GL_STATIC_DRAW);
 	std::cout << sizeof(float) * vSize << std::endl;
-	glVertexAttribPointer(attribIndex, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)0);
+	glVertexAttribPointer(attribIndex, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(attribIndex);
 
-	//normal values may have to change this
-
-	glVertexAttribPointer(attribIndex + 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
+	//normal values
+	glVertexAttribPointer(attribIndex + 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(3 * sizeof(GL_FLOAT)));
 	glEnableVertexAttribArray(attribIndex + 1);
 
+	// texture coords
+	glVertexAttribPointer(attribIndex + 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (void*)(6 * sizeof(GL_FLOAT)));
+	glEnableVertexAttribArray(attribIndex + 2);
+
+	m_texture = std::move(Texture(textureFileName));
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//glBindVertexArray(0);
 }
@@ -45,9 +77,11 @@ Model::Model(const void *vertices, GLuint vSize, const void *indices, GLuint iSi
 	glVertexAttribPointer(attribIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(attribIndex);
 
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// No to - glBindBUffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
 }
 
 Model::Model(const Model& p1)
@@ -73,6 +107,12 @@ Model::Model(const Model& p1)
 
 void Model::setData()
 {
+}
+
+void Model::bindTexture()
+{
+	//glBindTexture(GL_TEXTURE_2D, 1);
+	m_texture.Bind();
 }
 
 bool Model::isIndexed() const noexcept
