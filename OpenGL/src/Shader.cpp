@@ -28,7 +28,15 @@ ShaderProgram::ShaderProgram(std::vector<ShaderInfo> &shaders)
 	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		std::cout << "Not linked " << std::endl; //TODO
+		std::cout << "Not linked " << std::endl;
+		GLint length{ 0 };
+		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)alloca(length * sizeof(char));
+
+		glGetProgramInfoLog(m_programID, length, &length, message);
+		std::cout << message << std::endl;
+		
+		//glDeleteProgram(m_programID);
 	}
 #endif //DEBUG
 

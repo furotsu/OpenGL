@@ -23,6 +23,11 @@ glm::vec3 Camera::getPosition() const
 	return m_position;
 }
 
+glm::vec3 Camera::getFront() const
+{
+	return m_front;
+}
+
 void Camera::moveCamera(MoveDirection direction, float deltaTime)
 {
 	if (direction == MoveDirection::FORWARD)

@@ -38,6 +38,7 @@ public:
 
 	glm::mat4& getViewMatrix();
 	glm::vec3 getPosition() const;
+	glm::vec3 getFront() const;
 
 	void moveCamera(MoveDirection direction, float deltaTime);
 	void rotateCamera(float, float, GLboolean);

@@ -4,10 +4,15 @@
 #include "vendor/glm/gtc/matrix_transform.hpp"
 #include "vendor/glm/gtc/type_ptr.hpp"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include <iostream>
 #include <chrono>
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include "Shader.h"
 #include "renderer.h"
@@ -64,7 +69,9 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow *window = glfwCreateWindow(800, 800, "Triangles", NULL, NULL);
+	int windowWidth  = 1600;
+    int windowHeight = 900;
+    GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "Triangles", NULL, NULL);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (!window)
     {
@@ -138,9 +145,9 @@ int main(int argc, char** argv)
        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
    };
   
-    Model mainObject(vertices, 36, 1, "res/textures/container2.jpg", GL_TRIANGLES);
-    Model lightObject(vertices, 36, 1, GL_TRIANGLES);
-    glm::vec3 lightPos(0.1, 2.0f, -6.0f);
+   Model mainObject(vertices, 36, 1, std::vector<std::string>{"res/textures/container2.jpg", "res/textures/container2_specular.jpg"}, GL_TRIANGLES);
+   Model lightObject(vertices, 36, 1, GL_TRIANGLES);
+    glm::vec3 lightPos(0.1, 2.0f, 6.0f);
 
     ShaderProgram mainProgram(shaders);
     ShaderProgram lightProgram(lightShaders);
@@ -173,21 +180,17 @@ int main(int argc, char** argv)
     modelMat = glm::translate(modelMat, glm::vec3(0.0f, -4.0f, -2.0f));
     model2 = glm::translate(model2, glm::vec3(0.0f, 2.0f, 0.0f));
 
-    glm::mat4 projMat = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+    glm::mat4 projMat = glm::perspective(glm::radians(45.0f), (float)windowWidth/(float)windowHeight, 0.1f, 100.0f);
 
     glm::mat4 lightMat = glm::mat4(1.0f);
     lightMat = glm::translate(lightMat, lightPos);
     lightMat = glm::scale(lightMat, glm::vec3(0.2f));
 
-    mainProgram.SetUniformMat4f("model", modelMat);
-    mainProgram.SetUniformMat4f("projection", projMat);
-    mainProgram.SetUniform3f("objectColor", 1.0f, 0.5f, 0.31f);
-    mainProgram.SetUniform3f("lightColor", 0.7f, 0.5f, 1.0f);
-    mainProgram.SetUniform3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
 
     glEnable(GL_DEPTH_TEST);
     /*GLuint circleVAO = createCircle(0.2f, 0.2f, 100.0f, program);
     GLuint cubeVAO = createCube(0, 0.0f, program);
+    */
     glm::vec3 cubePositions[] = {
     glm::vec3(0.0f,  0.0f,  0.0f),
     glm::vec3(2.0f,  5.0f, -15.0f),
@@ -199,11 +202,21 @@ int main(int argc, char** argv)
     glm::vec3(1.5f,  2.0f, -2.5f),
     glm::vec3(1.5f,  0.2f, -1.5f),
     glm::vec3(-1.3f,  1.0f, -1.5f)
-    };*/
+    };
+
+    glm::vec3 pointLightPositions[] = {
+    glm::vec3(0.7f,  0.2f,  2.0f),
+    glm::vec3(2.3f, -3.3f, -4.0f),
+    glm::vec3(-4.0f,  2.0f, -12.0f),
+    glm::vec3(0.0f,  0.0f, -3.0f)
+    };
 
     glm::vec3 lightColor(1.0f);
     glm::vec3 ambientColor(1.0f);
     glm::vec3 diffColor(1.0f);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -212,8 +225,7 @@ int main(int argc, char** argv)
 
         glfwSetCursorPosCallback(window, mouse_callback);
 
-        mainProgram.Bind();
-        mainProgram.SetUniform1f("u_time", (float)glfwGetTime());
+        //mainProgram.SetUniform1f("u_time", (float)glfwGetTime());
         processInput(window, deltaTime);
 
         //lightMat = glm::translate(lightMat, glm::vec3(lightPos.x - 1.0f - sin(glfwGetTime()) * 2.0f, lightPos.y - sin(glfwGetTime() / 2.0f)*1.0f, 0.0f));
@@ -226,24 +238,59 @@ int main(int argc, char** argv)
         diffColor = lightColor * glm::vec3(0.5f);
         ambientColor = diffColor * glm::vec3(0.2f);
 
+        mainProgram.Bind();
+        //vertex shader uniforms
         mainProgram.SetUniformMat4f("view", camera.getViewMatrix());
         mainProgram.SetUniformMat4f("model", modelMat);
         mainProgram.SetUniformMat4f("projection", projMat);
+
+        //fragment shader uniforms
         mainProgram.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        mainProgram.SetUniform1i("material.diffuse", 0); // diffuse map (texture itself?)
+        mainProgram.SetUniform1i("material.specular", 1);// specular map
+        mainProgram.SetUniform1f("material.shininess", 64.0f);
+        // directional light
+        mainProgram.SetUniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        mainProgram.SetUniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        mainProgram.SetUniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        mainProgram.SetUniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // point light 1
+        for (int i = 0; i != 4; ++i)
+        {
+            std::string number = std::to_string(i);
+            mainProgram.SetUniform3f(("pointLights[" + number +  "].position").c_str(), pointLightPositions[i].x, pointLightPositions[i].y, pointLightPositions[i].z);
+            mainProgram.SetUniform3f(("pointLights[" + number + "].ambient").c_str(), 0.05f, 0.05f, 0.05f);
+            mainProgram.SetUniform3f(("pointLights[" + number + "].diffuse").c_str(), 0.8f, 0.8f, 0.8f);
+            mainProgram.SetUniform3f(("pointLights[" + number + "].specular").c_str(), 1.0f, 1.0f, 1.0f);
+            mainProgram.SetUniform1f(("pointLights[" + number + "].constantIntens").c_str(), 1.0f);
+            mainProgram.SetUniform1f(("pointLights[" + number + "].linearIntens").c_str(), 0.09);
+            mainProgram.SetUniform1f(("pointLights[" + number + "].quadraticIntens").c_str(), 0.032);
+        }
 
-        mainProgram.SetUniform1i("material.diffuse", 0);
-
-        mainProgram.SetUniform3f("material.specular", 0.04f, 0.7f, 0.7f);
-        mainProgram.SetUniform1f("material.shininess", 0.78125f * 128.0f);
-    
-        mainProgram.SetUniform3f("light.position", lightPos.x, lightPos.y, lightPos.z);
-        mainProgram.SetUniform3f("light.ambient", ambientColor.x, ambientColor.y, ambientColor.z);
-        mainProgram.SetUniform3f("light.diffuse", diffColor.x, diffColor.y, diffColor.z);
-        mainProgram.SetUniform3f("light.specular", 1.0f, 1.0f, 1.0f);
-
+        // spotLight    
+        mainProgram.SetUniform3f("flashLight.position", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        mainProgram.SetUniform3f("flashLight.direction", camera.getFront().x, camera.getFront().y, camera.getFront().z);
+        mainProgram.SetUniform3f("flashLight.ambient", 0.0f, 0.0f, 0.0f);
+        mainProgram.SetUniform3f("flashLight.diffuse", 1.0f, 1.0f, 1.0f);
+        mainProgram.SetUniform3f("flashLight.specular", 1.0f, 1.0f, 1.0f);
+        mainProgram.SetUniform1f("flashLight.constantIntens", 1.0f);
+        mainProgram.SetUniform1f("flashLight.linearIntens", 0.09);
+        mainProgram.SetUniform1f("flashLight.quadraticIntens", 0.032);
+        mainProgram.SetUniform1f("flashLight.innerCutOff", glm::cos(glm::radians(12.5f)));
+        mainProgram.SetUniform1f("flashLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
         renderer.draw(mainProgram, mainObject);
-        
+        for (unsigned int i = 0; i != 10; i++)
+        {
+            glm::mat4 modelMat = glm::mat4(1.0f);
+            modelMat = glm::translate(modelMat, cubePositions[i]);
+            float angle = 20.0f * i;
+            modelMat = glm::rotate(modelMat, glm::radians(angle + (float)currentTime/20), glm::vec3(1.0f, 0.3f + i/19, 0.5f + i/16));
+            mainProgram.SetUniformMat4f("model", modelMat);
+
+            renderer.draw(mainProgram, mainObject);
+        }
+
         lightProgram.Bind();
         lightProgram.SetUniformMat4f("view", camera.getViewMatrix());
         lightProgram.SetUniformMat4f("model", lightMat);
@@ -251,21 +298,18 @@ int main(int argc, char** argv)
         lightProgram.SetUniform3f("lightColor", diffColor.x, diffColor.y, diffColor.z);
         
         renderer.draw(lightProgram, lightObject);
-
-
-        /*
-        for (unsigned int i = 0; i < 10; i++)
+        for (unsigned int i = 0; i != 4; i++)
         {
-            glm::mat4 modelMat = glm::mat4(1.0f);
-            modelMat = glm::translate(modelMat, cubePositions[i]);
-            float angle = 20.0f * i;
-            modelMat = glm::rotate(modelMat, glm::radians(angle + (float)currentTime/20), glm::vec3(1.0f, 0.3f + i/19, 0.5f + i/16));
-            glUniformMatrix4fv(modelMatID, 1, GL_FALSE, glm::value_ptr(modelMat));
+            glm::mat4 lightMat = glm::mat4(1.0f);
+            lightMat = glm::translate(lightMat, pointLightPositions[i]);
+            lightMat = glm::scale(lightMat, glm::vec3(0.1f, 0.1f, 0.1f));
 
-            drawCube();
+            lightProgram.SetUniformMat4f("model", lightMat);
+
             glDrawArrays(GL_TRIANGLES, 0, 36);
+            renderer.draw(lightProgram, lightObject);
         }
-        */
+        
         //program.Bind(); 
 
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
