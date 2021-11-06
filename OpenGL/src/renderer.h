@@ -4,18 +4,21 @@
 #include <GLFW/glfw3.h>
 
 #include "Shader.h"
-#include "model.h"
+#include "model/model.h"
+#include "Camera.h"
 //#include "shapes.h"
 
 class Renderer
 {
 private:
 	ShaderProgram m_program;
+	int m_windowWidth;
+	int m_windowHeight;
+	glm::mat4 m_projMat;
 
 public:
-	Renderer();
+	Renderer(int windowWidth = 1000, int windowHeight = 1000, float fovDegrees = 45.0f);
 
-	void draw(ShaderProgram &program, Model &model) const;
-	
-
+	// Set all uniforms and make draw calls
+	void draw(ShaderProgram &program, Model &model, Camera &camera);
 };

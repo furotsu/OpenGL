@@ -14,9 +14,11 @@ out vec3 Normal;
 out vec3 FragPos;
 out vec2 TexCoords;
 
-void main()
+void main()	
 {
-	gl_Position = projection * view * model * vec4(vPosition, 1.0);
+	//gl_Position = projection * view * model * vec4(vPosition, 1.0);
+
+	gl_Position = projection * view * model * vec4(vPosition, 1.0f);
 
 	Normal = mat3(transpose(inverse(model))) * normal;
 	FragPos = vec3(model * vec4(vPosition, 1.0f));
