@@ -37,5 +37,6 @@ public: //private:
     void proccessPositions(std::vector<glm::vec3>& positions, sceneStructure::Primitive& primitive, std::ifstream &file);
     void proccessNormals(std::vector<glm::vec3>& normals, sceneStructure::Primitive& primitive, std::ifstream& file);
     void proccessTexCoords(std::vector<glm::vec2>& texCoords, sceneStructure::Primitive& primitive, std::ifstream& file);
-    void processIndices(std::vector<unsigned int>& indices, sceneStructure::Primitive& primitive, std::ifstream& file);
+    void processIndices(std::vector<unsigned short>& indices, sceneStructure::Primitive& primitive, std::ifstream& file);
+    void processTextures(std::vector<Texture>& textures, sceneStructure::Primitive& primitive);
 };  

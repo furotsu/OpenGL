@@ -9,6 +9,7 @@ Model::Model(char *path)
 
 Model::Model(std::string path)
 {
+	m_directory = path.substr(0, path.find_last_of('/') + 1);
 	loadModel(path);
 }
 
@@ -45,14 +46,15 @@ Json::Value Model::parseglTF(std::string path)
 	ss << file.rdbuf();
 	std::string rawJson = ss.str();
 
-	ss.clear();
-	file.close();
 #ifdef _DEBUG
 	if (!file)
 	{
 		std::cout << "cannot read model file" << std::endl;
 	}
 #endif
+	ss.clear();
+	file.close();
+
 	const auto rawJsonLength = static_cast<int>(rawJson.length());
 
 	Json::Value root;
@@ -76,12 +78,12 @@ void Model::processNode(std::shared_ptr<sceneStructure::Node> node)
 std::unique_ptr<Mesh> Model::processMesh(sceneStructure::Mesh &mesh, std::shared_ptr<sceneStructure::Node> node)
 {
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	std::vector<unsigned short> indices;
 	std::vector<Texture> textures;
 
 	// TODO make checks
 
-	std::ifstream file(mesh.primitives[0].position->bufferView->buffer->uri, std::ios::binary | std::ios::in);
+	std::ifstream file(m_directory + mesh.primitives[0].position->bufferView->buffer->uri, std::ios::binary | std::ios::in);
 
 	if (!file)
 	{
@@ -95,19 +97,25 @@ std::unique_ptr<Mesh> Model::processMesh(sceneStructure::Mesh &mesh, std::shared
 	//assume that there is only one primitive
 	proccessPositions(positions, mesh.primitives[0], file);
 	proccessNormals(normals, mesh.primitives[0], file);
-	//proccessTexCoords(texCoords, mesh.primitives[0], file);
+	proccessTexCoords(texCoords, mesh.primitives[0], file);
 	processIndices(indices, mesh.primitives[0], file);
-	
+	//processTextures(textures, mesh.primitives[0]);
+	textures.push_back(Texture(m_directory + mesh.primitives[0].material->baseColorTexture->uri, TextureType::Diffuse));
+
 	file.close();
 	for (int i = 0; i != positions.size(); ++i)
 	{
 		Vertex vertex;
 		vertex.Position = positions[i];
 		vertex.Normal = normals[i];
-		//vertex.TexCoords = texCoords[i];
+		vertex.TexCoords = texCoords[i];
 		vertices.push_back(vertex);
 	}
-	std::unique_ptr<Mesh> m(std::make_unique<Mesh>(vertices, indices, textures, node->translation, node->rotation, node->scale));
+	std::unique_ptr<Mesh> m;
+	if (node->haveMatrix)
+		 m = std::make_unique<Mesh>(vertices, indices, textures, node->transMat);
+	else
+		 m = std::make_unique<Mesh>(vertices, indices, textures, node->translation, node->rotation, node->scale);
 	return std::move(m);
 }
 
@@ -146,7 +154,7 @@ void Model::proccessNormals(std::vector<glm::vec3>& normals, sceneStructure::Pri
 
 	// assume that type == vec3
 	unsigned int count = accessor->count;
-	//assume that component type == float
+	//assume that component type == unsigned int
 	//ComponentType compType = accessor->componentType;
 
 	glm::vec3 normal;
@@ -178,12 +186,16 @@ void Model::proccessTexCoords(std::vector<glm::vec2>& texCoords, sceneStructure:
 	{
 		file.read((char*)&texCoord.x, sizeof(float));
 		file.read((char*)&texCoord.y, sizeof(float));
-
+		//texCoord.x = (texCoord.x > 0.9833459854125976) ? 0.9833459854125976 : texCoord.x;
+		//texCoord.y = (texCoord.y > 0.9800369739532472) ? 0.9800369739532472 : texCoord.y;
+		//texCoord.x = (texCoord.x < 0.026409000158309938) ? 0.026409000158309938 : texCoord.x;
+		//texCoord.y = (texCoord.y < 0.01996302604675293) ? 0.01996302604675293 : texCoord.y;
+ 
 		texCoords.push_back(texCoord);
 	}
 }
 
-void Model::processIndices(std::vector<unsigned int>& indices, sceneStructure::Primitive& primitive, std::ifstream& file)
+void Model::processIndices(std::vector<unsigned short>& indices, sceneStructure::Primitive& primitive, std::ifstream& file)
 {
 	//unsigned short
 	std::shared_ptr<sceneStructure::Accessor> accessor = primitive.indices;
@@ -202,8 +214,12 @@ void Model::processIndices(std::vector<unsigned int>& indices, sceneStructure::P
 
 		indices.push_back(n);
 	}
-
 }
+
+void Model::processTextures(std::vector<Texture>& textures, sceneStructure::Primitive& primitive)
+{
+}
+
 
 
 

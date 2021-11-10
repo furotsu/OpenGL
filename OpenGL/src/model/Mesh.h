@@ -26,7 +26,7 @@ class Mesh
 {
 public:
 	std::vector<Vertex> m_vertices;
-	std::vector<GLuint> m_indices;
+	std::vector<unsigned short> m_indices;
 	std::vector<Texture> m_textures;
 
 	glm::mat4 m_transformMat;
@@ -52,8 +52,9 @@ public:
 	//Mesh(const void *vertices, GLuint vSize, GLuint attribIndex, GLenum drawMode = GL_TRIANGLES);
 	//Mesh(const void* vertices, GLuint vSize, GLuint attribIndex, std::vector<std::string> textureFilePath, GLenum drawMode = GL_TRIANGLES);
 	//Mesh(const void *vertices, GLuint vSize, const void *indices, GLuint iSize, GLuint attribIndex, GLenum drawMode = GL_TRIANGLES);
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures, glm::vec3 translation = glm::vec3(1.0f),
+	Mesh(std::vector<Vertex> &vertices, std::vector<unsigned short> &indices, std::vector<Texture> &textures, glm::vec3 translation = glm::vec3(1.0f),
 														glm::vec4 rotation = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3 scale = glm::vec3(1.0f)); //TODO add pass by reference
+	Mesh(std::vector<Vertex> &vertices, std::vector<unsigned short> &indices, std::vector<Texture> &textures, glm::mat4 &translation);
 	Mesh(const Mesh& p1);
 
 	void initModel();

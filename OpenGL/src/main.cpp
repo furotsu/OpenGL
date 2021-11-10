@@ -98,7 +98,7 @@ int main(int argc, char** argv)
     };
     
     //Model mainObject("res/models/lantern/lantern.gltf");
-    Model mainObject("res/models/box/Box.gltf");
+    Model mainObject("res/models/lantern/Lantern.gltf");
 
     ShaderProgram mainProgram(shaders);
     ShaderProgram lightProgram(lightShaders);
@@ -118,53 +118,17 @@ int main(int argc, char** argv)
 
     double previousTime = glfwGetTime();
     int frameCount = 0;
-    std::vector<float> v;
-    for (int i = 0; i != mainObject.m_meshes[0]->m_vertices.size(); ++i)
-    {
-        v.push_back(mainObject.m_meshes[0]->m_vertices[i].Position.x);
-        v.push_back(mainObject.m_meshes[0]->m_vertices[i].Position.y);
-        v.push_back(mainObject.m_meshes[0]->m_vertices[i].Position.z);
-    }
-    std::vector<Vertex> v2 = mainObject.m_meshes[0]->m_vertices;
-    std::vector<unsigned short> i;
-    for (int j = 0 ; j != mainObject.m_meshes[0]->m_indices.size(); ++j)
-         i.push_back(mainObject.m_meshes[0]->m_indices[j]);
     
-    unsigned int m_VAO, m_VBO, m_EBO;
     // 3d stuff goes here
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
-    glBindVertexArray(m_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, v2.size() * sizeof(Vertex), &v2[0], GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, i.size() * sizeof(unsigned short), &i[0], GL_STATIC_DRAW);
-
-    //vertices positions
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0); // TODO - somehow automatize attribIndex setup
-    glEnableVertexAttribArray(1);
-    //normal values
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    //glEnableVertexAttribArray(1);
-
-    // texture coords
-    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-    //glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    
-
-    //glEnable(GL_DEPTH_TEST);
+ 
+    glEnable(GL_DEPTH_TEST);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(15.0f, 15.0f, 15.0f));
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
     glm::mat4 m_projMat = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
 
@@ -172,14 +136,10 @@ int main(int argc, char** argv)
 
         processInput(window, deltaTime);
 
-        mainProgram.Bind();
-        
-        mainProgram.SetUniformMat4f("view", camera.getViewMatrix());
-        mainProgram.SetUniformMat4f("projection", m_projMat);
-        mainProgram.SetUniformMat4f("model", model);
+        renderer.draw(mainProgram, mainObject, camera);
 
-        glBindVertexArray(m_VAO);
-        glDrawElements(GL_TRIANGLES, i.size(), GL_UNSIGNED_SHORT, 0);
+        //glBindVertexArray(m_VAO);
+        //glDrawElements(GL_TRIANGLES, i.size(), GL_UNSIGNED_SHORT, 0);
 
         //renderer.draw(lightProgram, mainObject, camera);
 

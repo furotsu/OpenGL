@@ -7,6 +7,7 @@
 #include <model/json.h>
 
 #include "vendor/glm/glm.hpp"
+#include "vendor/glm/gtc/matrix_transform.hpp"
 
 enum class ComponentType
 {
@@ -57,9 +58,24 @@ namespace sceneStructure
 		Accessor(const Json::Value& accessor, Scene& scene);
 	};
 
-	struct Material
+	struct Sampler
 	{
 
+	};
+
+	struct Texture
+	{
+		std::string uri;
+		std::shared_ptr<Sampler> sampler;
+
+		Texture(const Json::Value& texture, Scene& scene);
+	};
+
+	struct Material
+	{
+		std::shared_ptr<Texture> baseColorTexture;
+
+		Material(const Json::Value& material, Scene& scene);
 	};
 
 	struct Primitive
@@ -92,12 +108,14 @@ namespace sceneStructure
 	struct Node
 	{
 		std::vector<std::shared_ptr<Node>> children;
-		std::vector<int> chidrenId;
+		std::vector<int> childrenId;
 		std::shared_ptr<Mesh> mesh;
 		glm::vec3 translation;
 		glm::vec4 rotation;
 		glm::vec3 scale;
+		glm::mat4 transMat;
 		std::string name;
+		bool haveMatrix;
 		int id;
 
 		Node(const Json::Value& node, Scene& scene);
@@ -115,6 +133,8 @@ namespace sceneStructure
 		std::vector<std::shared_ptr<Node>> nodes;
 		std::vector<std::shared_ptr<Mesh>> meshes;
 		std::vector<std::shared_ptr<Accessor>> accessors;
+		std::vector<std::shared_ptr<Material>> materials;
+		std::vector<std::shared_ptr<Texture>> textures;
 		std::vector<std::shared_ptr<BufferView>> bufferViews;
 		std::vector<std::shared_ptr<Buffer>> buffers;
 		std::vector<std::string> images;
