@@ -9,7 +9,7 @@
 
 class Controller
 {
-    //Gui m_gui;
+    Gui m_gui;
     GLFWwindow* m_window;
     Renderer m_renderer;
     ShaderProgram m_mainProgram;
@@ -23,6 +23,7 @@ class Controller
 
     std::vector<std::shared_ptr<LightSource>> m_lights;
     std::vector<std::shared_ptr<Model>> m_models;
+    bool m_menuOn;
 
 public:
     float m_lastX;

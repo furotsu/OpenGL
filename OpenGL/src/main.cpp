@@ -1,4 +1,5 @@
 #include "gui/Controller.h"
+#include "gui/Gui.h"
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"
 #include "vendor/glm/gtc/type_ptr.hpp"
@@ -10,7 +11,6 @@
 #include <vector>
 
 Controller controller;  
-
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
