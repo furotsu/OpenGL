@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "vendor/stb_image/stb_image.h"
 #include "GL/glew.h"
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 
@@ -12,7 +13,10 @@ Texture::Texture(const std::string& filepath, TextureType type)
 	glGenTextures(1, &m_id);
 
 	//stbi_set_flip_vertically_on_load(1);
+	double s = glfwGetTime();
+
 	m_LocalBuffer = stbi_load(filepath.c_str(), &m_Width, &m_Height, &m_BPP, 0);
+	std::cout << glfwGetTime() - s << std::endl;
 
     if (m_LocalBuffer)
     {

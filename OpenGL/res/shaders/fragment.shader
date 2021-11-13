@@ -48,10 +48,13 @@ struct FlashLight
 	float quadraticIntens;
 };
 
-#define NR_POINT_LIGHTS 4
+#define MAX_LIGHTS 10
 
-uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform FlashLight flashLight;
+uniform int pointLightsCount;
+uniform int flashLightsCount;
+
+uniform PointLight pointLights[MAX_LIGHTS];
+uniform FlashLight flashLights[MAX_LIGHTS];
 uniform DirLight dirLight;
 
 uniform Material material;
@@ -73,15 +76,16 @@ void main()
 	//fColor = vec4(abs(cos(u_time)), y, x, 1.0);
 	// properties
 	vec3 norm = normalize(Normal);
-	vec3 viewDir = normalize(flashLight.position - FragPos);
+	vec3 viewDir = normalize(cameraPos - FragPos);
 	// phase 1: Directional lighting
-	vec3 result = vec3(0.0f);
-	//3vec3 result = CalcDirLight(dirLight, norm, viewDir);
+	//vec3 result = vec3(0.0f);
+	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 	// phase 2: Point lights
-	//for (int i = 0; i < NR_POINT_LIGHTS; i++)
-		//result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+	for (int i = 0; i < pointLightsCount; ++i)
+		result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 	// phase 3: Spot light
-	result += CalcSpotLight(flashLight, norm, FragPos, viewDir);    
+	for (int i = 0; i < flashLightsCount; ++i)
+		result += CalcSpotLight(flashLights[i], norm, FragPos, viewDir);    
 
 	fColor = vec4(result, 1.0);
 }

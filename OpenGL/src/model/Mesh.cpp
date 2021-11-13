@@ -106,11 +106,11 @@ void Mesh::draw(ShaderProgram& program)
 		case TextureType::Specular: number = std::to_string(specularNum++); name = "material.texture_specular"; break;
 		default: std::cout << "O_o texture type troubles in model drawing function" << std::endl;
 		}
-
 		program.SetUniform1f((name + number).c_str(), i);
 
 		m_textures[i].Bind(i);
 	}
+	//program.SetUniform1f("material.shininess", 64.0f);
 	glActiveTexture(GL_TEXTURE0);
 
 	program.SetUniformMat4f("model", m_transformMat);	

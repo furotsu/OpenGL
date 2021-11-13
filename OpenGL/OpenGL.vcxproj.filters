@@ -427,6 +427,23 @@
     <None Include="res\vendor\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="res\models\box\Box0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\models\boxTextured\BoxTextured0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\models\duck\Duck0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\models\lantern\Lantern.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\vendor\Lantern.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\models\lantern\Lantern.gltf" />
+    <None Include="res\models\duck\Duck.gltf" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -465,15 +482,39 @@
     <ClCompile Include="res\modelLoader\sceneStructure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\lightSource\lightSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui_impl_glfw_gl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res\vendor\gui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\shapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="res\models\models.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer.h">
@@ -1349,6 +1390,36 @@
     <ClInclude Include="src\model\json-forwards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\lightSource\lightSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imgui_impl_glfw_gl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\vendor\gui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\container2.png">
@@ -1364,6 +1435,21 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\container2_specular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\lantern\Lantern_roughnessMetallic.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\lantern\Lantern_baseColor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\lantern\Lantern_emissive.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\lantern\Lantern_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\duck\DuckCM.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

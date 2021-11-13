@@ -147,6 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="res\models\boxTextured\BoxTextured0.bin" />
+    <None Include="res\models\box\Box0.bin" />
+    <None Include="res\models\duck\Duck.gltf" />
+    <None Include="res\models\duck\Duck0.bin" />
+    <None Include="res\models\lantern\Lantern.bin" />
+    <None Include="res\models\lantern\Lantern.gltf" />
     <None Include="res\shaders\fragment.shader" />
     <None Include="res\shaders\fragmentLight.shader" />
     <None Include="res\shaders\vertex.shader" />
@@ -287,12 +293,22 @@
     <None Include="res\vendor\glm\gtx\vector_angle.inl" />
     <None Include="res\vendor\glm\gtx\vector_query.inl" />
     <None Include="res\vendor\glm\gtx\wrap.inl" />
+    <None Include="res\vendor\Lantern.bin" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="res\modelLoader\sceneStructure.cpp" />
     <ClCompile Include="res\vendor\glm\detail\glm.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui_demo.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui_draw.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui_tables.cpp" />
+    <ClCompile Include="res\vendor\gui\imgui_widgets.cpp" />
     <ClCompile Include="res\vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\gui\Controller.cpp" />
+    <ClCompile Include="src\gui\Gui.cpp" />
+    <ClCompile Include="src\lightSource\lightSource.cpp" />
     <ClCompile Include="src\model\jsoncpp.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\model\Mesh.cpp" />
@@ -304,7 +320,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="res\modelLoader\sceneStructure.h" />
-    <ClInclude Include="res\models\models.h" />
     <ClInclude Include="res\vendor\glm\common.hpp" />
     <ClInclude Include="res\vendor\glm\detail\compute_common.hpp" />
     <ClInclude Include="res\vendor\glm\detail\compute_vector_relational.hpp" />
@@ -587,8 +602,18 @@
     <ClInclude Include="res\vendor\glm\vec3.hpp" />
     <ClInclude Include="res\vendor\glm\vec4.hpp" />
     <ClInclude Include="res\vendor\glm\vector_relational.hpp" />
+    <ClInclude Include="res\vendor\gui\imconfig.h" />
+    <ClInclude Include="res\vendor\gui\imgui.h" />
+    <ClInclude Include="res\vendor\gui\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="res\vendor\gui\imgui_internal.h" />
+    <ClInclude Include="res\vendor\gui\imstb_rectpack.h" />
+    <ClInclude Include="res\vendor\gui\imstb_textedit.h" />
+    <ClInclude Include="res\vendor\gui\imstb_truetype.h" />
     <ClInclude Include="res\vendor\stb_image\stb_image.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\gui\Controller.h" />
+    <ClInclude Include="src\gui\Gui.h" />
+    <ClInclude Include="src\lightSource\lightSource.h" />
     <ClInclude Include="src\model\json-forwards.h" />
     <ClInclude Include="src\model\json.h" />
     <ClInclude Include="src\model\Mesh.h" />
@@ -599,6 +624,11 @@
     <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\models\duck\DuckCM.png" />
+    <Image Include="res\models\lantern\Lantern_baseColor.png" />
+    <Image Include="res\models\lantern\Lantern_emissive.png" />
+    <Image Include="res\models\lantern\Lantern_normal.png" />
+    <Image Include="res\models\lantern\Lantern_roughnessMetallic.png" />
     <Image Include="res\textures\cobblestone.jpg" />
     <Image Include="res\textures\container2.jpg" />
     <Image Include="res\textures\container2.png" />
