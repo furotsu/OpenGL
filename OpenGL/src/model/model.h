@@ -21,6 +21,7 @@ public: //private:
     // model data
     std::vector<std::unique_ptr<Mesh>> m_meshes;
     std::string m_directory;
+    glm::vec3 m_position;
 public:
     Model(char* path);
     Model(std::string path);
@@ -39,4 +40,9 @@ public: //private:
     void proccessTexCoords(std::vector<glm::vec2>& texCoords, sceneStructure::Primitive& primitive, std::ifstream& file);
     void processIndices(std::vector<unsigned short>& indices, sceneStructure::Primitive& primitive, std::ifstream& file);
     void processTextures(std::vector<Texture>& textures, sceneStructure::Primitive& primitive);
+
+public:
+    void setPosition(glm::vec3 position);
+
+    friend class Gui;
 };  

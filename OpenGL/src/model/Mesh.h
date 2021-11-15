@@ -74,5 +74,6 @@ public:
 	GLenum getDrawMode() const noexcept;
 
 	void changeModel();
+	void move(glm::vec3 position);
 
 };

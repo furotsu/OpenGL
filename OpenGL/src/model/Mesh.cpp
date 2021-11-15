@@ -168,4 +168,9 @@ void Mesh::changeModel()
 	// some stuff with GLmap and so on
 }
 
+void Mesh::move(glm::vec3 position)
+{
+	m_transformMat = glm::translate(m_transformMat, position);
+}
+
 

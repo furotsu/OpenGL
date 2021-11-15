@@ -15,6 +15,7 @@ Model::Model(std::string path)
 
 void Model::draw(ShaderProgram& shader)
 {
+	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	for (unsigned int i = 0; i != m_meshes.size(); ++i)
 	{
 		m_meshes[i]->draw(shader);
@@ -218,6 +219,12 @@ void Model::processIndices(std::vector<unsigned short>& indices, sceneStructure:
 
 void Model::processTextures(std::vector<Texture>& textures, sceneStructure::Primitive& primitive)
 {
+}
+
+void Model::setPosition(glm::vec3 position)
+{
+	for (auto& elem : m_meshes)
+		elem->move(position);
 }
 
 

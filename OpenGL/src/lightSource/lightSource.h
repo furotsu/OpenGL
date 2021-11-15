@@ -27,6 +27,8 @@ protected:
 
 public:
 	virtual void bindUniforms(ShaderProgram& program);
+
+	friend class Gui;
 };
 
 class DirectionalLight : public LightSource

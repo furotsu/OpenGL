@@ -50,6 +50,8 @@ Controller::Controller()
     m_gui = Gui(m_window);
 
     m_lights.push_back(l);
+    m_gui.addLight(m_lights[0]);
+    m_gui.addModel(m_models[0]);
 
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1);
