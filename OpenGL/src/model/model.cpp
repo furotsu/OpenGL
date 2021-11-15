@@ -2,6 +2,8 @@
 
 #include "model.h"
 
+std::vector<std::shared_ptr<Texture>> Model::m_textures = {};
+
 Model::Model(char *path)
 {
 	loadModel(path);
@@ -9,15 +11,18 @@ Model::Model(char *path)
 
 Model::Model(std::string path)
 {
+	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_rotation = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	m_directory = path.substr(0, path.find_last_of('/') + 1);
 	loadModel(path);
 }
 
 void Model::draw(ShaderProgram& shader)
 {
-	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	for (unsigned int i = 0; i != m_meshes.size(); ++i)
 	{
+		m_meshes[i]->setTextureUniform(shader);
 		m_meshes[i]->draw(shader);
 	}
 }
@@ -80,7 +85,7 @@ std::unique_ptr<Mesh> Model::processMesh(sceneStructure::Mesh &mesh, std::shared
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned short> indices;
-	std::vector<Texture> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	// TODO make checks
 
@@ -100,8 +105,8 @@ std::unique_ptr<Mesh> Model::processMesh(sceneStructure::Mesh &mesh, std::shared
 	proccessNormals(normals, mesh.primitives[0], file);
 	proccessTexCoords(texCoords, mesh.primitives[0], file);
 	processIndices(indices, mesh.primitives[0], file);
-	//processTextures(textures, mesh.primitives[0]);
-	textures.push_back(Texture(m_directory + mesh.primitives[0].material->baseColorTexture->uri, TextureType::Diffuse));
+	processTextures(textures, mesh.primitives[0]);
+	//textures.push_back(Texture(m_directory + mesh.primitives[0].material->baseColorTexture->uri, TextureType::Diffuse));
 
 	file.close();
 	for (int i = 0; i != positions.size(); ++i)
@@ -187,10 +192,6 @@ void Model::proccessTexCoords(std::vector<glm::vec2>& texCoords, sceneStructure:
 	{
 		file.read((char*)&texCoord.x, sizeof(float));
 		file.read((char*)&texCoord.y, sizeof(float));
-		//texCoord.x = (texCoord.x > 0.9833459854125976) ? 0.9833459854125976 : texCoord.x;
-		//texCoord.y = (texCoord.y > 0.9800369739532472) ? 0.9800369739532472 : texCoord.y;
-		//texCoord.x = (texCoord.x < 0.026409000158309938) ? 0.026409000158309938 : texCoord.x;
-		//texCoord.y = (texCoord.y < 0.01996302604675293) ? 0.01996302604675293 : texCoord.y;
  
 		texCoords.push_back(texCoord);
 	}
@@ -217,14 +218,40 @@ void Model::processIndices(std::vector<unsigned short>& indices, sceneStructure:
 	}
 }
 
-void Model::processTextures(std::vector<Texture>& textures, sceneStructure::Primitive& primitive)
+void Model::processTextures(std::vector<std::shared_ptr<Texture>>& textures, sceneStructure::Primitive& primitive)
 {
+	for (int i = 0; i != m_textures.size(); ++i)
+	{
+		// if texture already loaded send its pointer to mesh
+		if (m_textures[i]->filepath == m_directory + primitive.material->baseColorTexture->uri)
+		{
+			textures.push_back(m_textures[i]);
+			return;
+		}
+	}
+	// else - load this texture and send its pointer to mesh
+	m_textures.push_back(std::make_shared<Texture>(m_directory + primitive.material->baseColorTexture->uri, TextureType::Diffuse));
+	textures.push_back(m_textures[m_textures.size() - 1]);
 }
 
-void Model::setPosition(glm::vec3 position)
+void Model::setPosition(glm::vec3 translation)
 {
 	for (auto& elem : m_meshes)
-		elem->move(position);
+		elem->move(translation);
+	//m_position += translation;
+}
+
+void Model::rotate(glm::vec4 rotation)
+{
+	for (auto& elem : m_meshes)
+		elem->rotate(rotation);
+}
+
+void Model::scale(glm::vec3 scale)
+{
+	for (auto& elem : m_meshes)
+		elem->scale(scale);
+	//m_scale += scale;
 }
 
 

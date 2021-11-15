@@ -48,6 +48,14 @@ void Gui::configModel(int i)
     float pos[3] = { m_models[i]->m_position.x, m_models[i]->m_position.y, m_models[i]->m_position.z };
     ImGui::DragFloat3("position", pos, 0.03f, -10.0f, 10.0f);
     m_models[i]->setPosition(glm::vec3(pos[0], pos[1], pos[2]));
+
+    float scale = m_models[i]->m_scale[0];
+    ImGui::DragFloat("scale", &scale, 0.05, 0.001, 100.0f);
+    m_models[i]->scale(glm::vec3(scale, scale, scale));
+
+    float rotation = m_models[i]->m_rotation[3];
+    ImGui::DragFloat("rotate", &rotation, 0.5f, 0.0f, 360.0f);
+    m_models[i]->rotate(glm::vec4(rotation, 1.0f, 1.0f, 1.0f));
 }
 
 Gui::~Gui()

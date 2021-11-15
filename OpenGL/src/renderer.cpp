@@ -28,3 +28,24 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::v
 
     model->draw(program);
 }
+
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
+{
+    program.Bind();
+
+    //model related uniforms
+
+    //camera related uniforms
+    program.SetUniformMat4f("view", camera.getViewMatrix());
+    program.SetUniformMat4f("projection", m_projMat);
+
+    //fragment shader uniforms
+    program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+
+    for (int i = 0; i != lightSources.size(); ++i)
+    {
+        lightSources[i]->bindUniforms(program);
+    }
+
+    terrain->draw(program);
+}

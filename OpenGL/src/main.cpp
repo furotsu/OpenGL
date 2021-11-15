@@ -33,10 +33,15 @@ int main(int argc, char** argv)
 {
     
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 
     while (!controller.shouldClose())
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
         controller.updateGameLogic(mouse_callback);
     }
 

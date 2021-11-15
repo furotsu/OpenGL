@@ -155,8 +155,10 @@
     <None Include="res\models\lantern\Lantern.gltf" />
     <None Include="res\shaders\fragment.shader" />
     <None Include="res\shaders\fragmentLight.shader" />
+    <None Include="res\shaders\fragmentTerrain.shader" />
     <None Include="res\shaders\vertex.shader" />
     <None Include="res\shaders\vertexLight.shader" />
+    <None Include="res\shaders\vertexTerrain.shader" />
     <None Include="res\vendor\glm\detail\func_common.inl" />
     <None Include="res\vendor\glm\detail\func_common_simd.inl" />
     <None Include="res\vendor\glm\detail\func_exponential.inl" />
@@ -316,6 +318,7 @@
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\shapes.cpp" />
+    <ClCompile Include="src\terrain\Terrain.cpp" />
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -618,9 +621,11 @@
     <ClInclude Include="src\model\json.h" />
     <ClInclude Include="src\model\Mesh.h" />
     <ClInclude Include="src\model\model.h" />
+    <ClInclude Include="src\model\Vertex.h" />
     <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\shapes.h" />
+    <ClInclude Include="src\terrain\Terrain.h" />
     <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -634,6 +639,7 @@
     <Image Include="res\textures\container2.png" />
     <Image Include="res\textures\container2_specular.jpg" />
     <Image Include="res\textures\container2_specular.png" />
+    <Image Include="res\textures\terrain.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

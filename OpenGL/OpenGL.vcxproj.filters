@@ -444,6 +444,8 @@
     </None>
     <None Include="res\models\lantern\Lantern.gltf" />
     <None Include="res\models\duck\Duck.gltf" />
+    <None Include="res\shaders\vertexTerrain.shader" />
+    <None Include="res\shaders\fragmentTerrain.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -507,6 +509,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\terrain\Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1420,6 +1425,12 @@
     <ClInclude Include="src\gui\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\terrain\Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\container2.png">
@@ -1450,6 +1461,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\models\duck\DuckCM.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\terrain.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

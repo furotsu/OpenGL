@@ -14,6 +14,7 @@ class Controller
     Renderer m_renderer;
     ShaderProgram m_mainProgram;
     ShaderProgram m_lightProgram;
+    ShaderProgram m_terrainProgram;
 
     int m_windowWidth;
     int m_windowHeight;
@@ -23,6 +24,7 @@ class Controller
 
     std::vector<std::shared_ptr<LightSource>> m_lights;
     std::vector<std::shared_ptr<Model>> m_models;
+    std::shared_ptr<Terrain> m_terrain;
     bool m_menuOn;
 
 public:
@@ -33,6 +35,8 @@ public:
 
     Controller();
     ~Controller();
+
+    void initLibrary();
 
     void processInput();
     void mouse_callbackR(GLFWwindow* window, double xpos, double ypos);

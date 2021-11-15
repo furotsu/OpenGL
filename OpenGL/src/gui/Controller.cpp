@@ -2,6 +2,43 @@
 
 Controller::Controller()
 {
+    initLibrary();
+
+    std::vector<ShaderInfo>  shaders
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertex.shader", 0},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragment.shader", 0},
+    };
+    std::vector<ShaderInfo> lightShaders
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertexLight.shader", 1},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentLight.shader", 1},
+    };  
+    std::vector<ShaderInfo> terrainShaders
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertexTerrain.shader", 2},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentTerrain.shader", 2},
+    };
+
+    m_terrain = std::make_shared<Terrain>(128, 800, 800, "res/textures/terrain.jpg");
+
+    m_models.push_back(std::make_shared<Model>("res/models/duck/Duck.gltf"));
+    std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
+    m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
+
+    m_mainProgram = ShaderProgram(shaders);
+    m_lightProgram = ShaderProgram(lightShaders);
+    m_terrainProgram = ShaderProgram(terrainShaders);
+
+    m_gui = Gui(m_window);
+
+    m_lights.push_back(l);
+    m_gui.addLight(m_lights[0]);
+    m_gui.addModel(m_models[0]);
+}
+
+void Controller::initLibrary()
+{
     /* Initialize the library */
     if (!glfwInit())
         std::cout << "glfw has not been initialized" << std::endl;
@@ -19,7 +56,7 @@ Controller::Controller()
     if (!m_window)
     {
         glfwTerminate();
-        return ;
+        return;
     }
 
     glfwMakeContextCurrent(m_window);
@@ -31,27 +68,6 @@ Controller::Controller()
     {
         std::cout << "error with glew " << std::endl;
     }
-    std::vector<ShaderInfo>  shaders
-    {
-        { GL_VERTEX_SHADER, "res/shaders/vertex.shader", 0},
-        { GL_FRAGMENT_SHADER, "res/shaders/fragment.shader", 0},
-    };
-    std::vector<ShaderInfo> lightShaders
-    {
-        { GL_VERTEX_SHADER, "res/shaders/vertexLight.shader", 1},
-        { GL_FRAGMENT_SHADER, "res/shaders/fragmentLight.shader", 1},
-    };  
-
-    m_models.push_back(std::make_shared<Model>("res/models/boxTextured/BoxTextured.gltf"));
-    std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
-    m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
-    m_mainProgram = ShaderProgram(shaders);
-    m_lightProgram = ShaderProgram(lightShaders);
-    m_gui = Gui(m_window);
-
-    m_lights.push_back(l);
-    m_gui.addLight(m_lights[0]);
-    m_gui.addModel(m_models[0]);
 
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1);
@@ -67,24 +83,29 @@ void Controller::processInput()
         m_camera.moveCamera(MoveDirection::LEFT, m_deltaTime);
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         m_camera.moveCamera(MoveDirection::RIGHT, m_deltaTime);
-    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE))
+
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        if (m_menuOn)
+        glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
         {
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            m_menuOn = false;
-        }
-        else
-        {
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            m_menuOn = true;
+            if (m_menuOn)
+            {
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                m_menuOn = false;
+            }
+            else
+            {
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                m_menuOn = true;
+            }
+            glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_FALSE);
         }
     }
 }
 
 void Controller::updateGameLogic(GLFWcursorposfun func)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_currentTime = glfwGetTime();
     m_deltaTime = m_currentTime - m_previousTime;
     m_previousTime = m_currentTime;
@@ -96,11 +117,14 @@ void Controller::updateGameLogic(GLFWcursorposfun func)
 
     this->processInput();
 
+    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
+
     for(int i = 0; i != m_models.size(); ++i)
         m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
 
     if(m_menuOn)
         m_gui.render();
+
 
     glfwSwapBuffers(m_window);
     glfwPollEvents();

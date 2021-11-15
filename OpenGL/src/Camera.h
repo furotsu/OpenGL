@@ -6,7 +6,7 @@
 // TODO lol
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 0.5f;
+const float SPEED = 1.0f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
@@ -33,7 +33,7 @@ private:
 	float m_yaw;
 	float m_pitch;
 public:
-	Camera(glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f), const float& yaw = YAW, const float& pitch = PITCH);
+	Camera(glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f), const float& yaw = YAW, const float& pitch = PITCH);
 
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw = YAW, float pitch = PITCH);
 
