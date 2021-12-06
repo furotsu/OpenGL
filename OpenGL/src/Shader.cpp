@@ -11,13 +11,14 @@ ShaderProgram::ShaderProgram(std::vector<ShaderInfo> &shaders)
 {
 	m_programID = glCreateProgram();
 
-
+	//int c = 1;
 	for (ShaderInfo &shaderEntry : shaders)
 	{
 		shaderEntry.shaderID = compileShader(shaderEntry.type, parseShader(shaderEntry.filePath));
 
-		glAttachShader(m_programID, shaderEntry.shaderID);
-
+		//if (c != 3)
+			glAttachShader(m_programID, shaderEntry.shaderID);
+		//c++;
 	}
 
 	glLinkProgram(m_programID);
@@ -28,7 +29,7 @@ ShaderProgram::ShaderProgram(std::vector<ShaderInfo> &shaders)
 	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		std::cout << "Not linked " << std::endl;
+		std::cout << "Not linked either: " << shaders[0].filePath  << " or : " << shaders[1].filePath << " shader" << std::endl;
 		GLint length{ 0 };
 		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &length);
 		char* message = (char*)alloca(length * sizeof(char));
@@ -123,6 +124,11 @@ void ShaderProgram::SetUniform1i(const std::string& name, GLint value)
 void ShaderProgram::SetUniform1f(const std::string& name, GLfloat value)
 {
 	glUniform1f(getUniformLocation(name), value);
+}
+
+void ShaderProgram::SetUniform2f(const std::string& name, GLfloat v1, GLfloat v2)
+{
+	glUniform2f(getUniformLocation(name), v1, v2);
 }
 
 void ShaderProgram::SetUniform3f(const std::string& name, GLfloat v0, GLfloat v1, GLfloat v2)

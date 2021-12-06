@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)OpenGL\src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)OpenGL\res;$(SolutionDir)OpenGL\res\vendor;$(SolutionDir)OpenGL\res\textures;$(SolutionDir)OpenGL\res\models\lantern;$(SolutionDir)OpenGL\res\modelLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)OpenGL\src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)OpenGL\res;$(SolutionDir)OpenGL\res\vendor;$(SolutionDir)OpenGL\res\textures;$(SolutionDir)OpenGL\src\actors;$(SolutionDir)OpenGL\res\vendor\tinyXml;$(SolutionDir)OpenGL\res\modelLoader;$(SolutionDir)OpenGL\src\Debugger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)OpenGL\src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)OpenGL\res;$(SolutionDir)OpenGL\res\vendor;$(SolutionDir)OpenGL\res\textures;$(SolutionDir)OpenGL\res\models\lantern;$(SolutionDir)OpenGL\res\modelLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)OpenGL\src;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)OpenGL\res;$(SolutionDir)OpenGL\res\vendor;$(SolutionDir)OpenGL\res\textures;$(SolutionDir)OpenGL\src\actors;$(SolutionDir)OpenGL\res\vendor\tinyXml;$(SolutionDir)OpenGL\res\modelLoader;$(SolutionDir)OpenGL\src\Debugger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,9 +156,13 @@
     <None Include="res\shaders\fragment.shader" />
     <None Include="res\shaders\fragmentLight.shader" />
     <None Include="res\shaders\fragmentTerrain.shader" />
+    <None Include="res\shaders\fragmentWater.shader" />
+    <None Include="res\shaders\geometryTerrain.shader" />
+    <None Include="res\shaders\geometryWater.shader" />
     <None Include="res\shaders\vertex.shader" />
     <None Include="res\shaders\vertexLight.shader" />
     <None Include="res\shaders\vertexTerrain.shader" />
+    <None Include="res\shaders\vertexWater.shader" />
     <None Include="res\vendor\glm\detail\func_common.inl" />
     <None Include="res\vendor\glm\detail\func_common_simd.inl" />
     <None Include="res\vendor\glm\detail\func_exponential.inl" />
@@ -299,6 +303,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="res\modelLoader\sceneStructure.cpp" />
+    <ClCompile Include="res\modelLoader\XmlLoader.cpp" />
     <ClCompile Include="res\vendor\glm\detail\glm.cpp" />
     <ClCompile Include="res\vendor\gui\imgui.cpp" />
     <ClCompile Include="res\vendor\gui\imgui_demo.cpp" />
@@ -307,14 +312,21 @@
     <ClCompile Include="res\vendor\gui\imgui_tables.cpp" />
     <ClCompile Include="res\vendor\gui\imgui_widgets.cpp" />
     <ClCompile Include="res\vendor\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\actor\actor.cpp" />
+    <ClCompile Include="src\actor\actorComponents\renderComponent.cpp" />
+    <ClCompile Include="src\actor\actorFactory.cpp" />
+    <ClCompile Include="src\actor\jsoncpp.cpp" />
+    <ClCompile Include="src\actor\Mesh.cpp" />
+    <ClCompile Include="src\actor\model.cpp" />
+    <ClCompile Include="src\cache\cache.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Debugger\debugger.cpp" />
     <ClCompile Include="src\gui\Controller.cpp" />
     <ClCompile Include="src\gui\Gui.cpp" />
+    <ClCompile Include="src\gui\MousePicker.cpp" />
     <ClCompile Include="src\lightSource\lightSource.cpp" />
-    <ClCompile Include="src\model\jsoncpp.cpp" />
+    <ClCompile Include="src\math\math.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\model\Mesh.cpp" />
-    <ClCompile Include="src\model\model.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\shapes.cpp" />
@@ -323,6 +335,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="res\modelLoader\sceneStructure.h" />
+    <ClInclude Include="res\modelLoader\XmlLoader.h" />
     <ClInclude Include="res\vendor\glm\common.hpp" />
     <ClInclude Include="res\vendor\glm\detail\compute_common.hpp" />
     <ClInclude Include="res\vendor\glm\detail\compute_vector_relational.hpp" />
@@ -613,15 +626,24 @@
     <ClInclude Include="res\vendor\gui\imstb_textedit.h" />
     <ClInclude Include="res\vendor\gui\imstb_truetype.h" />
     <ClInclude Include="res\vendor\stb_image\stb_image.h" />
+    <ClInclude Include="src\actor\actor.h" />
+    <ClInclude Include="src\actor\actorComponent.h" />
+    <ClInclude Include="src\actor\actorComponents\renderComponent.h" />
+    <ClInclude Include="src\actor\actorFactory.h" />
+    <ClInclude Include="src\actor\json-forwards.h" />
+    <ClInclude Include="src\actor\json.h" />
+    <ClInclude Include="src\actor\Mesh.h" />
+    <ClInclude Include="src\actor\model.h" />
+    <ClInclude Include="src\actor\Vertex.h" />
+    <ClInclude Include="src\cache\cache.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Debugger\debugger.h" />
     <ClInclude Include="src\gui\Controller.h" />
     <ClInclude Include="src\gui\Gui.h" />
+    <ClInclude Include="src\gui\MousePicker.h" />
+    <ClInclude Include="src\Interfaces.h" />
     <ClInclude Include="src\lightSource\lightSource.h" />
-    <ClInclude Include="src\model\json-forwards.h" />
-    <ClInclude Include="src\model\json.h" />
-    <ClInclude Include="src\model\Mesh.h" />
-    <ClInclude Include="src\model\model.h" />
-    <ClInclude Include="src\model\Vertex.h" />
+    <ClInclude Include="src\math\math.h" />
     <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\shapes.h" />
@@ -639,7 +661,11 @@
     <Image Include="res\textures\container2.png" />
     <Image Include="res\textures\container2_specular.jpg" />
     <Image Include="res\textures\container2_specular.png" />
+    <Image Include="res\textures\heightMap.png" />
     <Image Include="res\textures\terrain.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="res\actors\firstActor.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

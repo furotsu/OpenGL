@@ -238,7 +238,7 @@ void Model::setPosition(glm::vec3 translation)
 {
 	for (auto& elem : m_meshes)
 		elem->move(translation);
-	//m_position += translation;
+	m_position += translation;
 }
 
 void Model::rotate(glm::vec4 rotation)

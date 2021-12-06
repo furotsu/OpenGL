@@ -35,6 +35,7 @@ private:
 public:
 	void SetUniform1i(const std::string&, GLint);
 	void SetUniform1f(const std::string&, GLfloat);
+	void SetUniform2f(const std::string&, GLfloat, GLfloat);
 	void SetUniform3f(const std::string&, GLfloat, GLfloat, GLfloat);
 	void SetUniform4f(const std::string&, GLfloat, GLfloat, GLfloat, GLfloat);
 	void SetUniformMat4f(const std::string&, glm::mat4&);

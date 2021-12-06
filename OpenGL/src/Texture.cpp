@@ -4,7 +4,12 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-
+/*
+bool TextureLoader::VLoadResource(char* rawBuffer, unsigned int rawSize, std::shared_ptr<ResHandle> handle)
+{
+	return false;
+}
+*/
 Texture::Texture() {}
 Texture::Texture(const std::string& filepath, TextureType type)
 	: m_id(0), m_LocalBuffer(nullptr), type(type),
@@ -13,10 +18,8 @@ Texture::Texture(const std::string& filepath, TextureType type)
 	glGenTextures(1, &m_id);
 
 	//stbi_set_flip_vertically_on_load(1);
-	double s = glfwGetTime();
 
 	m_LocalBuffer = stbi_load(filepath.c_str(), &m_Width, &m_Height, &m_BPP, 0);
-	std::cout << glfwGetTime() - s << std::endl;
 
     if (m_LocalBuffer)
     {
@@ -62,3 +65,4 @@ void Texture::Unbind() const
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+

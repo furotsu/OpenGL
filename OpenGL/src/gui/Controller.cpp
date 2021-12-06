@@ -1,6 +1,7 @@
 #include "Controller.h"
 
 Controller::Controller()
+    : m_mousePos(0, 0)
 {
     initLibrary();
 
@@ -18,14 +19,16 @@ Controller::Controller()
     {
         { GL_VERTEX_SHADER, "res/shaders/vertexTerrain.shader", 2},
         { GL_FRAGMENT_SHADER, "res/shaders/fragmentTerrain.shader", 2},
+        //{ GL_GEOMETRY_SHADER, "res/shaders/geometryTerrain.shader", 2},
     };
 
-    m_terrain = std::make_shared<Terrain>(128, 800, 800, "res/textures/terrain.jpg");
+    m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/heightMap.png", "res/textures/heightMap.png");
 
-    m_models.push_back(std::make_shared<Model>("res/models/duck/Duck.gltf"));
+    m_models.push_back(std::make_shared<Model>("res/actors/models/duck/Duck.gltf"));
     std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
     m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
 
+    m_mousePicker = std::make_shared<MousePicker>(m_camera, m_terrain, m_renderer.getProjMat());
     m_mainProgram = ShaderProgram(shaders);
     m_lightProgram = ShaderProgram(lightShaders);
     m_terrainProgram = ShaderProgram(terrainShaders);
@@ -84,46 +87,77 @@ void Controller::processInput()
     if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         m_camera.moveCamera(MoveDirection::RIGHT, m_deltaTime);
 
-    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if(buttonTriggered(GLFW_KEY_ESCAPE))
     {
-        glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
-        if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_RELEASE)
+        m_firstMouse = true;
+        if (m_menuOn)
         {
-            if (m_menuOn)
-            {
-                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                m_menuOn = false;
-            }
-            else
-            {
-                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                m_menuOn = true;
-            }
-            glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_FALSE);
+            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            m_mousePos = m_mouseCameraPos;
+            glfwSetCursorPos(m_window, m_mousePos.x, m_mousePos.y);
+            m_menuOn = false;
+        }
+        else
+        {
+            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            m_mouseCameraPos = m_mousePos;
+            m_menuOn = true;
         }
     }
+    if (buttonTriggered(GLFW_KEY_P))
+    {
+        GLint polygonMode[2];
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode[0]);
+        if (polygonMode[0] == GL_FILL)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    if (buttonTriggered(GLFW_KEY_U))
+    {
+
+    }
+    
 }
 
-void Controller::updateGameLogic(GLFWcursorposfun func)
+bool Controller::buttonTriggered(int key)
+{
+    if (glfwGetKey(m_window, key) == GLFW_PRESS)
+    {
+        glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
+        if (glfwGetKey(m_window, key) == GLFW_RELEASE)
+        {
+            glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_FALSE);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun funcGui)
 {
     m_currentTime = glfwGetTime();
     m_deltaTime = m_currentTime - m_previousTime;
     m_previousTime = m_currentTime;
 
     if (!m_menuOn)
-        glfwSetCursorPosCallback(m_window, func);
+        glfwSetCursorPosCallback(m_window, funcGame);
     else
-        glfwSetCursorPosCallback(m_window, nullptr);
+        glfwSetCursorPosCallback(m_window, funcGui);
 
     this->processInput();
-
     m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
 
     for(int i = 0; i != m_models.size(); ++i)
         m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
 
-    if(m_menuOn)
+    if (m_menuOn)
+    {
         m_gui.render();
+    }
+    m_mousePicker->update(m_camera, m_mousePos);
+    std::cout << m_mousePicker->getIntersectionPoint().x << " " << m_mousePicker->getIntersectionPoint().y << std::endl;
 
 
     glfwSwapBuffers(m_window);

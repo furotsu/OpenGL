@@ -4,7 +4,7 @@
 #include <string>
 #include <utility>
 
-#include <model/json.h>
+#include <actor/json.h>
 
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"

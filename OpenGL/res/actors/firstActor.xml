@@ -1,0 +1,24 @@
+<Actor type="FirstActor" resource="actors/firstActor.xml">
+
+  <TransformComponent>
+    <Position x="0" y="5" z="0"/>
+    <YawPitchRoll x="0" y="0" z="0"/>
+  </TransformComponent>
+
+  <PhysicsComponent>
+    <Shape>Box</Shape>
+    <Density>glass</Density>
+    <PhysicsMaterial>Normal</PhysicsMaterial>
+  </PhysicsComponent>
+
+  <RenderComponent>
+    <Color r="0" g="0" b="1.0" a="1.0"/>
+    <Source resource="res/actors/models/boxTextured/BoxTextured.gltf"/>
+  </RenderComponent>
+
+  <BaseScriptComponent>
+    <ScriptObject constructor="AddPlayer" destructor="RemovePlayer" />
+    <ScriptData actorType="Teapot" />
+  </BaseScriptComponent>
+
+</Actor>

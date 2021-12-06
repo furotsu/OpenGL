@@ -17,7 +17,7 @@ void Gui::render()
     ImGui_ImplGlfwGL3_NewFrame();
     ImGui::Begin("Hello");
     //configLight(0);
-    configModel(0);
+    //configModel(0);
     ImGui::End();
 
 

@@ -183,8 +183,11 @@ void Mesh::changeModel()
 
 void Mesh::move(glm::vec3 &translation)
 {
+	//m_transformMat = glm::translate(m_transformMat, translation);
+	//m_translation += translation - 1.0f;
+	m_transformMat = glm::mat4(1.0f);
 	m_transformMat = glm::translate(m_transformMat, translation);
-	m_translation += translation - 1.0f;
+	m_transformMat = glm::scale(m_transformMat, m_scale);
 }
 
 void Mesh::rotate(glm::vec4& rotation)

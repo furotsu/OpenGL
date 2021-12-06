@@ -6,9 +6,11 @@
 #include <vector>
 
 #include "Shader.h"
-#include "model/Vertex.h"
+#include "actor/Vertex.h"
 #include "Texture.h"
+#include "stb_image/stb_image.h"
 
+constexpr float INVALID_HEIGHT = -666.66666f;
 
 
 class Terrain
@@ -16,10 +18,16 @@ class Terrain
 	unsigned int m_verticesCount;
 	unsigned int m_width;
 	unsigned int m_length;
+	float m_vertexSize;
+	float m_brushSize;
+	bool m_isChanging;
+	glm::vec2 m_brushPos;
 	std::vector<Vertex> m_vertices;
-	std::vector<int> m_indices;
+	std::vector<unsigned short> m_indices;
 	Texture m_diffuseTexture;
+	Texture m_heightMapTexture;
 	std::string m_textureFilepath;
+	std::string m_heightMapFilepath;
 
 	GLuint m_VAO;
 	GLuint m_VBO;
@@ -27,9 +35,18 @@ class Terrain
 	GLuint m_attribIndex;
 public:
 	Terrain();
-	Terrain(unsigned int, unsigned int, unsigned int, std::string);
-
+	Terrain(unsigned int, unsigned int, unsigned int, std::string, std::string);
+	
+	float getHeight(int x, int z, const stbi_uc *buffer);
 	void generateTerrain();
 	void initTerrain();
 	void draw(ShaderProgram&);
+	void setBrushPosition(glm::vec2);
+	void increaseHeight();
+
+	float getHeight(float, float);
+
+private:
+	void updateHeight();
+	void saveHeightMap();
 };

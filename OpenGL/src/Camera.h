@@ -1,14 +1,16 @@
+#pragma once
+
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "vendor/glm/gtc/matrix_transform.hpp"
 #include "vendor/glm/gtc/type_ptr.hpp"
 
 // TODO lol
-const float YAW = -90.0f;
-const float PITCH = 0.0f;
-const float SPEED = 1.0f;
-const float SENSITIVITY = 0.1f;
-const float ZOOM = 45.0f;
+constexpr float YAW = -90.0f;
+constexpr float PITCH = 0.0f;
+constexpr float SPEED = 1.0f;
+constexpr float SENSITIVITY = 0.1f;
+constexpr float ZOOM = 45.0f;
 
 enum class MoveDirection
 {
@@ -43,7 +45,6 @@ public:
 
 	void moveCamera(MoveDirection direction, float deltaTime);
 	void rotateCamera(float, float, GLboolean);
-	
 
 private:
 	void updateVectors();

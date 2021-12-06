@@ -4,7 +4,7 @@
 #include "vendor/gui/imgui_impl_glfw_gl3.h"
 
 #include "lightSource/lightSource.h"
-#include "model/Model.h"
+#include "actor/Model.h"
 
 class Gui
 {

@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 //#include "json/value.h"
-#include "model/json.h"
+#include "actor/json.h"
 
 #include "sceneStructure.h"
 

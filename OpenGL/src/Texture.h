@@ -1,13 +1,23 @@
 #pragma once
 
 #include <string>
+#include "Interfaces.h"
 
 enum class TextureType
 {
 	Diffuse,
 	Specular
 };
-
+/*
+class TextureLoader : public IResourceLoader
+{
+public:
+	virtual bool VUseRawFile() override { return false; }
+	virtual bool VDiscardRawBufferAfterLoad() override { return true; }
+	virtual unsigned int VGetLoadedResourceSize(char* rawBuffer, unsigned int rawSize) override { return 0; }
+	virtual bool VLoadResource(char* rawBuffer, unsigned int rawSize, std::shared_ptr<ResHandle> handle) override;
+};
+*/
 class Texture
 {
 private:

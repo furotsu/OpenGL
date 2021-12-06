@@ -6,9 +6,12 @@
 
 #include "renderer.h"
 #include "gui/Gui.h"
+#include "glm/glm.hpp"
+#include "MousePicker.h"
 
 class Controller
 {
+public:
     Gui m_gui;
     GLFWwindow* m_window;
     Renderer m_renderer;
@@ -25,12 +28,15 @@ class Controller
     std::vector<std::shared_ptr<LightSource>> m_lights;
     std::vector<std::shared_ptr<Model>> m_models;
     std::shared_ptr<Terrain> m_terrain;
+    std::shared_ptr<MousePicker> m_mousePicker;
     bool m_menuOn;
 
 public:
     float m_lastX;
     float m_lastY;
     bool m_firstMouse = true;
+    glm::vec2 m_mousePos;
+    glm::vec2 m_mouseCameraPos;
     Camera m_camera;
 
     Controller();
@@ -39,9 +45,10 @@ public:
     void initLibrary();
 
     void processInput();
+    bool buttonTriggered(int key);
     void mouse_callbackR(GLFWwindow* window, double xpos, double ypos);
 
-    void updateGameLogic(GLFWcursorposfun);
+    void updateGameLogic(GLFWcursorposfun, GLFWcursorposfun);
 
     bool shouldClose();
 

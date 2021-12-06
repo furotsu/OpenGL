@@ -34,10 +34,13 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
     program.Bind();
 
     //model related uniforms
+    program.SetUniform1f("u_time", glfwGetTime());
 
     //camera related uniforms
     program.SetUniformMat4f("view", camera.getViewMatrix());
     program.SetUniformMat4f("projection", m_projMat);
+    program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+
 
     //fragment shader uniforms
     program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
@@ -48,4 +51,9 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
     }
 
     terrain->draw(program);
+}
+
+glm::mat4 Renderer::getProjMat()
+{
+    return m_projMat;
 }
