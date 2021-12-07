@@ -21,17 +21,26 @@ Controller::Controller()
         { GL_FRAGMENT_SHADER, "res/shaders/fragmentTerrain.shader", 2},
         //{ GL_GEOMETRY_SHADER, "res/shaders/geometryTerrain.shader", 2},
     };
+    std::vector<ShaderInfo> waterShader
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertexWater.shader", 3},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentWater.shader", 3},
+        { GL_GEOMETRY_SHADER, "res/shaders/geometryWater.shader", 3},
+    };
 
     m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/terrain.jpg", "res/textures/heightMap.png");
+    m_water = std::make_shared<Water>(256, 4, 8, -2.0f);
 
     m_models.push_back(std::make_shared<Model>("res/actors/models/duck/Duck.gltf"));
     std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
     m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
 
     m_mousePicker = std::make_shared<MousePicker>(m_camera, m_terrain, m_renderer.getProjMat());
+
     m_mainProgram = ShaderProgram(shaders);
     m_lightProgram = ShaderProgram(lightShaders);
     m_terrainProgram = ShaderProgram(terrainShaders);
+    m_waterProgram = ShaderProgram(waterShader);
 
     m_gui = Gui(m_window);
 
@@ -155,10 +164,13 @@ void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun fun
         glfwSetCursorPosCallback(m_window, funcGui);
 
     this->processInput();
-    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
 
     for(int i = 0; i != m_models.size(); ++i)
         m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
+
+    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
+    m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
+
 
     if (m_menuOn)
     {

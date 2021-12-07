@@ -332,6 +332,7 @@
     <ClCompile Include="src\shapes.cpp" />
     <ClCompile Include="src\terrain\Terrain.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\water\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="res\modelLoader\sceneStructure.h" />
@@ -650,6 +651,7 @@
     <ClInclude Include="src\shapes.h" />
     <ClInclude Include="src\terrain\Terrain.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\water\Water.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\duck\DuckCM.png" />

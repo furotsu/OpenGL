@@ -10,10 +10,6 @@
 #include "Texture.h"
 #include "stb_image/stb_image.h"
 
-
-constexpr float INVALID_HEIGHT = -666.66666f;
-
-
 class Terrain
 {
 	unsigned int m_verticesCount;

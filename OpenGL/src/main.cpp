@@ -45,6 +45,10 @@ int main(int argc, char** argv)
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     glStencilFunc(GL_EQUAL, 1, 0xFF);
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);

@@ -551,6 +551,9 @@
     <ClCompile Include="src\gui\MousePicker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\water\Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -1514,6 +1517,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="res\vendor\stb_image\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\water\Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,16 +8,13 @@ out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
 out vec3 FragColor;
-out float height;
 
 in DATA
 {
     vec3 FragPos;
     vec2 TexCoords;
-    vec3 Normal;
     vec3 FragColor;
     mat4 projection;
-    float height;
 } data_in[];
 
 vec3 getNormal()
@@ -37,7 +34,6 @@ void main()
         Normal = getNormal();
         TexCoords = data_in[i].TexCoords;
         FragColor = data_in[i].FragColor;
-        height = data_in[i].height;
 
         EmitVertex();
     }

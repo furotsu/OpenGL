@@ -21,3 +21,9 @@ struct VertexActor
 	glm::vec3 Normal;
 	glm::vec2 TexCoords;
 };
+
+struct VertexWater
+{
+	glm::vec3 Position;
+	glm::vec3 Color;
+};

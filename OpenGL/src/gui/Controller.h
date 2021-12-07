@@ -18,6 +18,7 @@ public:
     ShaderProgram m_mainProgram;
     ShaderProgram m_lightProgram;
     ShaderProgram m_terrainProgram;
+    ShaderProgram m_waterProgram;
 
     int m_windowWidth;
     int m_windowHeight;
@@ -28,6 +29,7 @@ public:
     std::vector<std::shared_ptr<LightSource>> m_lights;
     std::vector<std::shared_ptr<Model>> m_models;
     std::shared_ptr<Terrain> m_terrain;
+    std::shared_ptr<Water> m_water;
     std::shared_ptr<MousePicker> m_mousePicker;
     bool m_menuOn;
 
