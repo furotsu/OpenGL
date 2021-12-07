@@ -74,10 +74,9 @@ glm::vec3 MousePicker::getPointOnRay(glm::vec3 ray, float distance)
 glm::vec3 MousePicker::binarySearch(float start, float finish, glm::vec3 ray) 
 {
 	float half = start + ((finish - start) / 2.0f);
-	float currPresicion = finish - start;
 	glm::vec3 res = ray;
 	int i = 0;
-	while (i != 50)
+	while (i < PRECISION)
 	{
 		if (intersectionInRange(start, half, ray)) 
 		{
@@ -89,7 +88,6 @@ glm::vec3 MousePicker::binarySearch(float start, float finish, glm::vec3 ray)
 			start = half;
 			half = half + ((finish - half) / 2.0f);
 		}
-		currPresicion /= 2;
 		i++;
 	}
 	return getPointOnRay(ray, half);
@@ -101,7 +99,6 @@ bool MousePicker::intersectionInRange(float start, float finish, glm::vec3 ray)
 	glm::vec3 endPoint = getPointOnRay(ray, finish);
 	if (isUnderGround(endPoint))
 	{
-		//std::cout << "lol";
 		return true;
 	}
 	else
@@ -112,11 +109,9 @@ bool MousePicker::intersectionInRange(float start, float finish, glm::vec3 ray)
 
 bool MousePicker::isUnderGround(glm::vec3 testPoint)
 {
-	float height = 0;
-
-	height = m_terrain->getHeight(testPoint.x, testPoint.z);
+	float height = m_terrain->getHeight(testPoint.x, testPoint.z);
 	
-	if (height != INVALID_HEIGHT && testPoint.y < height)
+	if (testPoint.y < height)
 	{
 		return true;
 	}

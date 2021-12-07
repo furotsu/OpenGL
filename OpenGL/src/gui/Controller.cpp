@@ -22,7 +22,7 @@ Controller::Controller()
         //{ GL_GEOMETRY_SHADER, "res/shaders/geometryTerrain.shader", 2},
     };
 
-    m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/heightMap.png", "res/textures/heightMap.png");
+    m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/terrain.jpg", "res/textures/heightMap.png");
 
     m_models.push_back(std::make_shared<Model>("res/actors/models/duck/Duck.gltf"));
     std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
@@ -115,7 +115,15 @@ void Controller::processInput()
     }
     if (buttonTriggered(GLFW_KEY_U))
     {
-
+        m_terrain->increaseHeight();
+    }
+    else if (buttonTriggered(GLFW_KEY_J))
+    {
+        m_terrain->decreaseHeight();
+    }
+    if (buttonTriggered(GLFW_KEY_0))
+    {
+        m_terrain->saveHeightMap("testHeightMap.png");
     }
     
 }
@@ -157,7 +165,6 @@ void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun fun
         m_gui.render();
     }
     m_mousePicker->update(m_camera, m_mousePos);
-    std::cout << m_mousePicker->getIntersectionPoint().x << " " << m_mousePicker->getIntersectionPoint().y << std::endl;
 
 
     glfwSwapBuffers(m_window);

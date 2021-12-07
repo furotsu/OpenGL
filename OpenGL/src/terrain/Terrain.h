@@ -10,6 +10,7 @@
 #include "Texture.h"
 #include "stb_image/stb_image.h"
 
+
 constexpr float INVALID_HEIGHT = -666.66666f;
 
 
@@ -37,16 +38,20 @@ public:
 	Terrain();
 	Terrain(unsigned int, unsigned int, unsigned int, std::string, std::string);
 	
-	float getHeight(int x, int z, const stbi_uc *buffer);
 	void generateTerrain();
 	void initTerrain();
 	void draw(ShaderProgram&);
 	void setBrushPosition(glm::vec2);
 	void increaseHeight();
+	void decreaseHeight();
 
 	float getHeight(float, float);
 
+	void saveHeightMap(std::string);
+	void loadHeightMap(std::string);
 private:
 	void updateHeight();
-	void saveHeightMap();
+	float colorToHeight(int x, int z, const stbi_uc *pixelsBuf);
+	float heightToColor(float);
+
 };

@@ -10,8 +10,8 @@
 #include "terrain/Terrain.h"
 #include "debugger.h"
 
-constexpr float PRECISION  = 0.0001f;
-constexpr float RAY_LENGTH = 10.0f;
+constexpr int PRECISION  = 200;
+constexpr float RAY_LENGTH = 20.0f;
 
 class MousePicker
 {

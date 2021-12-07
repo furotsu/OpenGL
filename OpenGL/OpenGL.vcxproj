@@ -626,6 +626,7 @@
     <ClInclude Include="res\vendor\gui\imstb_textedit.h" />
     <ClInclude Include="res\vendor\gui\imstb_truetype.h" />
     <ClInclude Include="res\vendor\stb_image\stb_image.h" />
+    <ClInclude Include="res\vendor\stb_image\stb_image_write.h" />
     <ClInclude Include="src\actor\actor.h" />
     <ClInclude Include="src\actor\actorComponent.h" />
     <ClInclude Include="src\actor\actorComponents\renderComponent.h" />
