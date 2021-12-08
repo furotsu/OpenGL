@@ -4,6 +4,7 @@
 
 layout(location = 1) in vec3 vPosition;
 layout(location = 2) in vec3 vColor;
+layout(location = 3) in vec2 vTexCoord;
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -20,6 +21,7 @@ out DATA
 void main()
 {
 	data_out.FragPos = vPosition;
+	data_out.TexCoords = vTexCoord;
 	data_out.projection = projection;
 	data_out.FragColor = normalize(vColor);
 

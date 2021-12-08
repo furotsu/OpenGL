@@ -2,9 +2,12 @@
 
 out vec4 fColor;
 
+uniform sampler2D reflectionTexture;
+
 uniform vec3 cameraPos;
 
 in vec3 FragPos;
+in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragColor;
 
@@ -22,12 +25,10 @@ void main()
 	vec3 diffuse = FragColor * max(dot(Normal, normalize(lightPos - FragPos)), 0.0f);
 	//vec3 specular = FragColor * spec;
 
-	fColor = vec4(ambient + diffuse, 1.0f);
-
 	float a = 0.2;
 	float diff = max(dot(Normal, normalize(lightPos - FragPos)), 0.0f);
-	fColor = (diff + a) * vec4(FragColor, 0.7f);	
-	
 
+	vec3 combinedColor = FragColor + texture(reflectionTexture, TexCoords).xyz;
 
+	fColor = (diff + a) * vec4(combinedColor, 0.7f);	
 }

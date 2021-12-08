@@ -8,7 +8,7 @@ out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
 out vec3 FragColor;
-
+    
 in DATA
 {
     vec3 FragPos;

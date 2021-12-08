@@ -1,10 +1,12 @@
 #include "Water.h"
+#include "debugger.h"
 
 Water::Water()
 	: m_verticesCount(128), m_width(800), m_length(800), m_waterLevel(0.0f)
 {
 	m_vertexSize = m_width / ((float)m_verticesCount - 1);
 	generateWater();
+	m_WFB = std::make_unique<WaterFrameBuffer>();
 }
 
 Water::Water(unsigned int verticesCount, unsigned int width, unsigned int length, float waterLevel)
@@ -13,6 +15,7 @@ Water::Water(unsigned int verticesCount, unsigned int width, unsigned int length
 	m_vertexSize = m_width / ((float)m_verticesCount - 1);
 	generateWater();
 	initWater();
+	m_WFB = std::make_unique<WaterFrameBuffer>();
 }
 
 void Water::generateWater()
@@ -32,6 +35,9 @@ void Water::generateWater()
 			v.Color.x = 44.0f;
 			v.Color.y = 208.0f;
 			v.Color.z = 226.0f;
+
+			v.TexCoords.x = (float)i / ((float)m_verticesCount - 1.0f);
+			v.TexCoords.y = (float)j / ((float)m_verticesCount - 1.0f);
 
 			m_vertices.push_back(v);
 		}
@@ -69,10 +75,14 @@ void Water::initWater()
 	//vertices positions
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexWater), (void*)0); // TODO - somehow automatize attribIndex setup
 	glEnableVertexAttribArray(1);
-	
+
 	//color values
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexWater), (void*)offsetof(VertexWater, Color));
 	glEnableVertexAttribArray(2);
+
+	//texture coords
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(VertexWater), (void*)offsetof(VertexWater, TexCoords));
+	glEnableVertexAttribArray(3);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -85,8 +95,99 @@ void Water::draw(ShaderProgram& program)
 	glBindVertexArray(0);
 }
 
+void Water::bindFramebuffer()
+{
+	m_WFB->bindReflectionFrameBuffer();
+}
+
+void Water::unbindFramebuffer()
+{
+	m_WFB->unbindCurrentFrameBuffer();
+}
+
 //TODO
 float Water::getHeight(float, float)
 {
 	return m_waterLevel;
 }
+
+WaterFrameBuffer::WaterFrameBuffer()
+{
+	initialiseReflectionFrameBuffer();
+	//initialiseRefractionFrameBuffer();
+}
+
+WaterFrameBuffer::~WaterFrameBuffer()
+{
+	unbindCurrentFrameBuffer();
+	cleanUp();
+}
+
+void WaterFrameBuffer::cleanUp()
+{
+	glDeleteFramebuffers(1, &m_reflectionFbo);
+	glDeleteTextures(1, &m_reflectionTexture);
+	glDeleteRenderbuffers(1, &m_reflectionRbo);
+}
+
+void WaterFrameBuffer::bindReflectionFrameBuffer()
+{
+	bindFrameBuffer(m_reflectionFbo, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+}
+
+void WaterFrameBuffer::bindFrameBuffer(int frameBuffer, int width, int height)
+{
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glViewport(0, 0, width, height);
+}
+
+void WaterFrameBuffer::unbindCurrentFrameBuffer()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, 1600, 900);
+}
+
+int WaterFrameBuffer::getReflectionTexture()
+{
+	return m_reflectionTexture;
+}
+
+void WaterFrameBuffer::initialiseReflectionFrameBuffer()
+{
+	//Frame buffer object color texture
+	glGenFramebuffers(1, &m_reflectionFbo);
+	glGenTextures(1, &m_reflectionTexture);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_reflectionFbo);
+	glBindTexture(GL_TEXTURE_2D, m_reflectionTexture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, REFLECTION_WIDTH, REFLECTION_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_reflectionTexture, 0);
+
+	//Render buffer object for depth and stencil buffers
+	glGenRenderbuffers(1, &m_reflectionRbo);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, m_reflectionRbo);
+
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+
+	//attach renderbuffer to framebuffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_reflectionRbo);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		ERROR("WATER FRAMEBUFFER: Framebuffer is not complete");
+	}
+
+	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+

@@ -10,6 +10,7 @@ Renderer::Renderer(int windowWidth, int windowHeight, float fovDegrees)
 
 void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::vector<std::shared_ptr<LightSource>> &lightSources, Camera &camera)
 {
+    glCullFace(GL_BACK);
 	program.Bind();
 
 	//model related uniforms
@@ -31,6 +32,7 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::v
 
 void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
 {
+    glCullFace(GL_FRONT);
     program.Bind();
 
     //model related uniforms
@@ -55,7 +57,12 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
 
 void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
 {
+    glDisable(GL_CULL_FACE);
+
     program.Bind();
+
+    //terrain->bindFramebuffer();
+    glBindTexture(GL_TEXTURE_2D, terrain->m_WFB->m_reflectionTexture);
 
     //model related uniforms
     program.SetUniform1f("u_time", glfwGetTime());
@@ -75,6 +82,8 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> terrain, std:
     }
 
     terrain->draw(program);
+
+    glEnable(GL_CULL_FACE);
 }
 
 glm::mat4 Renderer::getProjMat()

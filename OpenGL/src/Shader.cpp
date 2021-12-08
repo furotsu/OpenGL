@@ -173,7 +173,7 @@ GLint ShaderProgram::getUniformLocation(const std::string& name)
 
 	int location = glGetUniformLocation(m_programID, name.c_str());
 	if (location == -1)
-		std::cout << "Location allocation error lol: " << name << std::endl;
+		std::cout << "Location allocation error: " << name << std::endl;
 
 	m_uniformLocation[name] = location;
 	return location;

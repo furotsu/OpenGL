@@ -165,10 +165,23 @@ void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun fun
 
     this->processInput();
 
+    //glViewport(500, 300, 400, 200);
+
+    m_water->bindFramebuffer();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    for (int i = 0; i != m_models.size(); ++i)
+        m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
+
+    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
+    m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
+
+    m_water->unbindFramebuffer();
+
     for(int i = 0; i != m_models.size(); ++i)
         m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
 
     m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
+
     m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
 
 
