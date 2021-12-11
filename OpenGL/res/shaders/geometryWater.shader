@@ -6,15 +6,16 @@ layout(triangle_strip, max_vertices = 3) out;
 
 out vec3 FragPos;
 out vec3 Normal;
-out vec2 TexCoords;
 out vec3 FragColor;
+out vec4 clipSpace;
+out vec2 textureCoords;
     
 in DATA
 {
     vec3 FragPos;
-    vec2 TexCoords;
     vec3 FragColor;
     mat4 projection;
+    vec2 textureCoords;
 } data_in[];
 
 vec3 getNormal()
@@ -29,11 +30,12 @@ void main()
 
     for (int i = 0; i != 3; ++i)
     {
-        gl_Position = data_in[i].projection * gl_in[i].gl_Position;
+        clipSpace = data_in[i].projection * gl_in[i].gl_Position;
+        gl_Position = clipSpace;
         FragPos = data_in[i].FragPos;
         Normal = getNormal();
-        TexCoords = data_in[i].TexCoords;
         FragColor = data_in[i].FragColor;
+        textureCoords = data_in[i].textureCoords;
 
         EmitVertex();
     }

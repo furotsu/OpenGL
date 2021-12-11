@@ -10,6 +10,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec4 clipPlane;
+
 out vec3 Normal;
 out vec3 FragPos;
 out vec2 TexCoords;
@@ -21,5 +23,9 @@ void main()
 	FragPos = vec3(model * vec4(vPosition, 1.0f));
 	TexCoords = texCoords;
 
-	gl_Position = projection * view * model * vec4(vPosition, 1.0);
+	vec4 worldPosition =  model * vec4(vPosition, 1.0f);
+
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+
+	gl_Position = projection * view * worldPosition;
 }

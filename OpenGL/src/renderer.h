@@ -9,6 +9,7 @@
 #include "lightSource/lightSource.h"
 #include "terrain/Terrain.h"
 #include "water/Water.h"
+#include "world/Skybox.h"
 //#include "shapes.h"
 
 class Renderer
@@ -23,9 +24,10 @@ public:
 	Renderer(int windowWidth = 1000, int windowHeight = 1000, float fovDegrees = 45.0f);
 
 	// Set all uniforms and make draw calls
-	void draw(ShaderProgram& program, std::shared_ptr<Model> model, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera);
-	void draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera);
+	void draw(ShaderProgram& program, std::shared_ptr<Model> model, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera, glm::vec4);
+	void draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera, glm::vec4);
 	void draw(ShaderProgram &program, std::shared_ptr<Water> terrain, std::vector<std::shared_ptr<LightSource>> &lightSources, Camera &camera);
+	void draw(ShaderProgram& program, std::shared_ptr<Skybox> skybox, Camera& camera, glm::vec4);
 	
 	glm::mat4 getProjMat();
 };

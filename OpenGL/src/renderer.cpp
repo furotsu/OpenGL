@@ -8,12 +8,15 @@ Renderer::Renderer(int windowWidth, int windowHeight, float fovDegrees)
 	m_projMat = glm::perspective(glm::radians(fovDegrees), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 }
 
-void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::vector<std::shared_ptr<LightSource>> &lightSources, Camera &camera)
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera, glm::vec4 clipPlane)
 {
     glCullFace(GL_BACK);
 	program.Bind();
 
+    program.SetUniform4f("clipPlane", clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
+
 	//model related uniforms
+    
 
 	//camera related uniforms
 	program.SetUniformMat4f("view", camera.getViewMatrix());
@@ -30,10 +33,13 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Model> model, std::v
     model->draw(program);
 }
 
-void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera, glm::vec4 clipPlane)
 {
     glCullFace(GL_FRONT);
     program.Bind();
+
+    program.SetUniform4f("clipPlane", clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
+
 
     //model related uniforms
     program.SetUniform1f("u_time", glfwGetTime());
@@ -41,6 +47,8 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
     //camera related uniforms
     program.SetUniformMat4f("view", camera.getViewMatrix());
     program.SetUniformMat4f("projection", m_projMat);
+    //program.SetUniformMat4f("model")
+
     program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
 
@@ -55,14 +63,14 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
     terrain->draw(program);
 }
 
-void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> terrain, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> water, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
 {
     glDisable(GL_CULL_FACE);
 
     program.Bind();
 
     //terrain->bindFramebuffer();
-    glBindTexture(GL_TEXTURE_2D, terrain->m_WFB->m_reflectionTexture);
+    glBindTexture(GL_TEXTURE_2D, water->m_WFB->m_reflectionTexture);
 
     //model related uniforms
     program.SetUniform1f("u_time", glfwGetTime());
@@ -70,6 +78,9 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> terrain, std:
     //camera related uniforms
     program.SetUniformMat4f("view", camera.getViewMatrix());
     program.SetUniformMat4f("projection", m_projMat);
+    glm::mat4 modelMat = water->getModelMat();
+    program.SetUniformMat4f("model", modelMat);
+
     program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
 
@@ -81,8 +92,29 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> terrain, std:
         lightSources[i]->bindUniforms(program);
     }
 
-    terrain->draw(program);
+    water->draw(program);
 
+    glEnable(GL_CULL_FACE);
+}
+
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Skybox> skybox, Camera& camera, glm::vec4 clipPlane)
+{
+    glDepthMask(GL_FALSE);
+    glDisable(GL_CULL_FACE);
+    program.Bind();
+
+    program.SetUniform4f("clipPlane", clipPlane.x, clipPlane.y, clipPlane.z, clipPlane.w);
+
+    //removing the translation component of view matrix so skybox will be always around the player
+    glm::mat4 view = glm::mat4(glm::mat3(camera.getViewMatrix()));
+
+
+    //camera related unifroms
+    program.SetUniformMat4f("view", view);
+    program.SetUniformMat4f("projection", m_projMat);
+
+    skybox->draw(program);
+    glDepthMask(GL_TRUE);
     glEnable(GL_CULL_FACE);
 }
 

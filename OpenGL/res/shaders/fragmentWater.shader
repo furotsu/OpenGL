@@ -7,14 +7,21 @@ uniform sampler2D reflectionTexture;
 uniform vec3 cameraPos;
 
 in vec3 FragPos;
-in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragColor;
+in vec4 clipSpace;
+in vec3 resPos;
+in vec2 textureCoords;
+
 
 void main()
 {
+	vec2 ndc = (clipSpace.xy / clipSpace.w) / 2.0f + 0.5f;
 
-	vec3 lightPos = vec3(2.0f, 1.0f, 2.0f);
+	vec2 reflectionTexCoords = vec2(ndc.x, -ndc.y)  + textureCoords;
+
+
+	vec3 lightPos = vec3(0.0f, 0.5f, 2.0f);
 	vec3 lightDir = normalize(lightPos - FragPos);
 	vec3 reflectDir = reflect(-lightDir, Normal);
 	vec3 viewDir = normalize(cameraPos - FragPos);
@@ -25,10 +32,11 @@ void main()
 	vec3 diffuse = FragColor * max(dot(Normal, normalize(lightPos - FragPos)), 0.0f);
 	//vec3 specular = FragColor * spec;
 
-	float a = 0.2;
+	float a = 0.1;
 	float diff = max(dot(Normal, normalize(lightPos - FragPos)), 0.0f);
 
-	vec3 combinedColor = FragColor + texture(reflectionTexture, TexCoords).xyz;
+	vec3 combinedColor = FragColor * 0.5f + 0.5*texture(reflectionTexture, reflectionTexCoords).xyz;
 
-	fColor = (diff + a) * vec4(combinedColor, 0.7f);	
+	fColor = (diff + a) * vec4(combinedColor, 0.96f);
+	//fColor = vec4(combinedColor, 0.9f);	
 }

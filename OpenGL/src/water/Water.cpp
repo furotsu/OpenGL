@@ -7,6 +7,8 @@ Water::Water()
 	m_vertexSize = m_width / ((float)m_verticesCount - 1);
 	generateWater();
 	m_WFB = std::make_unique<WaterFrameBuffer>();
+	m_modelMat = glm::mat4(1.0f);
+	m_modelMat = glm::translate(m_modelMat, glm::vec3(0.0f, m_waterLevel, 0.0f));
 }
 
 Water::Water(unsigned int verticesCount, unsigned int width, unsigned int length, float waterLevel)
@@ -16,6 +18,8 @@ Water::Water(unsigned int verticesCount, unsigned int width, unsigned int length
 	generateWater();
 	initWater();
 	m_WFB = std::make_unique<WaterFrameBuffer>();
+	m_modelMat = glm::mat4(1.0f);
+	m_modelMat = glm::translate(m_modelMat, glm::vec3(0.0f, m_waterLevel, 0.0f));
 }
 
 void Water::generateWater()
@@ -36,8 +40,6 @@ void Water::generateWater()
 			v.Color.y = 208.0f;
 			v.Color.z = 226.0f;
 
-			v.TexCoords.x = (float)i / ((float)m_verticesCount - 1.0f);
-			v.TexCoords.y = (float)j / ((float)m_verticesCount - 1.0f);
 
 			m_vertices.push_back(v);
 		}
@@ -80,10 +82,6 @@ void Water::initWater()
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexWater), (void*)offsetof(VertexWater, Color));
 	glEnableVertexAttribArray(2);
 
-	//texture coords
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(VertexWater), (void*)offsetof(VertexWater, TexCoords));
-	glEnableVertexAttribArray(3);
-
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -109,6 +107,16 @@ void Water::unbindFramebuffer()
 float Water::getHeight(float, float)
 {
 	return m_waterLevel;
+}
+
+float Water::getWaterLevel()
+{
+	return m_waterLevel;
+}
+
+glm::mat4 Water::getModelMat()
+{
+	return m_modelMat;
 }
 
 WaterFrameBuffer::WaterFrameBuffer()

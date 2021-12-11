@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include <functional>
+#include <map>
 
 #include "renderer.h"
 #include "gui/Gui.h"
@@ -19,6 +20,7 @@ public:
     ShaderProgram m_lightProgram;
     ShaderProgram m_terrainProgram;
     ShaderProgram m_waterProgram;
+    ShaderProgram m_skyboxProgram;
 
     int m_windowWidth;
     int m_windowHeight;
@@ -31,6 +33,7 @@ public:
     std::shared_ptr<Terrain> m_terrain;
     std::shared_ptr<Water> m_water;
     std::shared_ptr<MousePicker> m_mousePicker;
+    std::shared_ptr<Skybox> m_skybox;
     bool m_menuOn;
 
 public:
@@ -39,7 +42,9 @@ public:
     bool m_firstMouse = true;
     glm::vec2 m_mousePos;
     glm::vec2 m_mouseCameraPos;
+    glm::vec4 m_clipPlane;
     Camera m_camera;
+    
 
     Controller();
     ~Controller();

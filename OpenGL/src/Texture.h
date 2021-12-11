@@ -1,12 +1,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
 #include "Interfaces.h"
 
 enum class TextureType
 {
 	Diffuse,
-	Specular
+	Specular,
+	CubeMap
 };
 /*
 class TextureLoader : public IResourceLoader
@@ -31,6 +34,7 @@ public:
 
 	Texture();
 	Texture(const std::string& filepath, TextureType type);
+	Texture(const std::vector<std::string>& faces, TextureType type = TextureType::CubeMap);
 	~Texture();
 
 	void Bind(unsigned int slot = 0) const;

@@ -28,6 +28,19 @@ glm::vec3 Camera::getFront() const
 	return m_front;
 }
 
+void Camera::setPosition(glm::vec3 position)
+{
+	m_position = position;
+	updateVectors();
+}
+
+void Camera::setYawPitch(float yaw, float pitch)
+{
+	m_yaw = yaw;
+	m_pitch = pitch;
+	updateVectors();
+}
+
 void Camera::moveCamera(MoveDirection direction, float deltaTime)
 {
 	if (direction == MoveDirection::FORWARD)
@@ -58,6 +71,13 @@ void Camera::rotateCamera(float xoffset, float yoffset, GLboolean constrainPitch
 			m_pitch = -89.0f;
 	}
 
+	updateVectors();
+}
+void Camera::mirrorHor(float position)
+{
+	float d = m_position.y - position;
+	m_position.y -= d * 2.0f;
+	m_pitch = -m_pitch;
 	updateVectors();
 }
 void Camera::updateVectors()

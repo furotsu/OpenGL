@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include "vendor/glm/gtc/matrix_transform.hpp"
 
 #include "Shader.h"
 #include "actor/Vertex.h"
@@ -13,6 +14,7 @@ class WaterFrameBuffer;
 
 class Water
 {
+	glm::mat4 m_modelMat;
 	unsigned int m_verticesCount;
 	unsigned int m_width;
 	unsigned int m_length;
@@ -37,6 +39,9 @@ public:
 	void bindFramebuffer();
 	void unbindFramebuffer();
 	float getHeight(float, float);
+
+	float getWaterLevel();
+	glm::mat4 getModelMat();
 
 	friend class WaterFrameBuffer;
 };

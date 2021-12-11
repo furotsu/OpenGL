@@ -450,6 +450,8 @@
     <None Include="res\shaders\fragmentWater.shader" />
     <None Include="res\shaders\geometryTerrain.shader" />
     <None Include="res\shaders\geometryWater.shader" />
+    <None Include="res\shaders\fragmentSkybox.shader" />
+    <None Include="res\shaders\vertexSkybox.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -552,6 +554,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\water\Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1522,6 +1527,9 @@
     <ClInclude Include="src\water\Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\world\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\container2.png">
@@ -1558,6 +1566,24 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\textures\heightMap.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\back.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\bottom.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\front.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\top.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

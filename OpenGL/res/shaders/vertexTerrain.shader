@@ -13,6 +13,8 @@ uniform float brushSize;
 uniform float u_time;
 uniform float isChanging;
 
+uniform vec4 clipPlane;
+
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
@@ -34,5 +36,9 @@ void main()
 		}
 	}
 
-	gl_Position = projection * view * vec4(vPosition, 1.0f);
+	vec4 worldPosition = vec4(vPosition, 1.0f);
+
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+
+	gl_Position = projection * view * worldPosition;
 }

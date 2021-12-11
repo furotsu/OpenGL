@@ -5,6 +5,9 @@ Controller::Controller()
 {
     initLibrary();
 
+    m_camera = Camera();
+
+        
     std::vector<ShaderInfo>  shaders
     {
         { GL_VERTEX_SHADER, "res/shaders/vertex.shader", 0},
@@ -27,13 +30,24 @@ Controller::Controller()
         { GL_FRAGMENT_SHADER, "res/shaders/fragmentWater.shader", 3},
         { GL_GEOMETRY_SHADER, "res/shaders/geometryWater.shader", 3},
     };
+    std::vector<ShaderInfo>  skyboxShaders
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertexSkybox.shader", 4},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentSkybox.shader", 4},
+    };
 
     m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/terrain.jpg", "res/textures/heightMap.png");
-    m_water = std::make_shared<Water>(256, 4, 8, -2.0f);
+    m_water = std::make_shared<Water>(256, 8, 8, -2.0f);
+
+    std::vector<std::string> faces{ "res/textures/right.png", "res/textures/left.png",
+                                    "res/textures/top.png",   "res/textures/bottom.png",
+                                    "res/textures/back.png", "res/textures/front.png" }; // something wrong here idk what
+    m_skybox = std::make_shared<Skybox>(faces);
 
     m_models.push_back(std::make_shared<Model>("res/actors/models/duck/Duck.gltf"));
     std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
     m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
+    
 
     m_mousePicker = std::make_shared<MousePicker>(m_camera, m_terrain, m_renderer.getProjMat());
 
@@ -41,12 +55,15 @@ Controller::Controller()
     m_lightProgram = ShaderProgram(lightShaders);
     m_terrainProgram = ShaderProgram(terrainShaders);
     m_waterProgram = ShaderProgram(waterShader);
+    m_skyboxProgram = ShaderProgram(skyboxShaders);
 
     m_gui = Gui(m_window);
 
     m_lights.push_back(l);
     m_gui.addLight(m_lights[0]);
     m_gui.addModel(m_models[0]);
+
+    m_clipPlane = glm::vec4(0.0f, 1.0f, 0.0f, -m_water->getWaterLevel() + 0.5f);
 }
 
 void Controller::initLibrary()
@@ -167,29 +184,42 @@ void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun fun
 
     //glViewport(500, 300, 400, 200);
 
+    m_camera.mirrorHor(m_water->getWaterLevel());
+    glEnable(GL_CLIP_DISTANCE0);
+
     m_water->bindFramebuffer();
+
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
     for (int i = 0; i != m_models.size(); ++i)
-        m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
+        m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera, m_clipPlane);
 
-    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
-    m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
+    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera, m_clipPlane);
 
+
+    m_renderer.draw(m_skyboxProgram, m_skybox, m_camera, m_clipPlane);
     m_water->unbindFramebuffer();
 
-    for(int i = 0; i != m_models.size(); ++i)
-        m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera);
+    m_camera.mirrorHor(m_water->getWaterLevel());
+    glDisable(GL_CLIP_DISTANCE0);
 
-    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera);
+
+    for(int i = 0; i != m_models.size(); ++i)
+        m_renderer.draw(m_mainProgram, m_models[i], m_lights, m_camera, m_clipPlane);
+
+    m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera, m_clipPlane);
 
     m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
 
+    m_renderer.draw(m_skyboxProgram, m_skybox, m_camera, m_clipPlane);
 
     if (m_menuOn)
     {
         m_gui.render();
     }
     m_mousePicker->update(m_camera, m_mousePos);
+
 
 
     glfwSwapBuffers(m_window);

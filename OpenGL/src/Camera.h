@@ -43,8 +43,13 @@ public:
 	glm::vec3 getPosition() const;
 	glm::vec3 getFront() const;
 
+	void setPosition(glm::vec3);
+	void setYawPitch(float, float);
+
 	void moveCamera(MoveDirection direction, float deltaTime);
 	void rotateCamera(float, float, GLboolean);
+
+	void mirrorHor(float);
 
 private:
 	void updateVectors();

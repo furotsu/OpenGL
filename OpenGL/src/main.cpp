@@ -27,6 +27,8 @@ void mouse_callbackGame(GLFWwindow* window, double xpos, double ypos)
     controller.m_lastY = ypos;
 
     controller.m_camera.rotateCamera(xoffset, yoffset, true);
+
+    //for proper gui enter/exit
     controller.m_mousePos = glm::vec2(xpos, ypos);
 }
 
@@ -44,16 +46,18 @@ int main(int argc, char** argv)
 {
     
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_CULL_FACE);
+
+    glEnable(GL_CLIP_DISTANCE0);
     
     glStencilFunc(GL_EQUAL, 1, 0xFF);
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
+    glClearColor(0.3f, 0.9f, 0.3f, 0.0f);
 
     while (!controller.shouldClose())
     {
