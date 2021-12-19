@@ -37,6 +37,6 @@ void main()
 
 	vec3 combinedColor = FragColor * 0.5f + 0.5*texture(reflectionTexture, reflectionTexCoords).xyz;
 
-	fColor = (diff + a) * vec4(combinedColor, 0.96f);
-	//fColor = vec4(combinedColor, 0.9f);	
+	//fColor = (diff + a) * vec4(combinedColor, 1.0f);
+	fColor = vec4(combinedColor, 1.0f);	
 }
