@@ -30,13 +30,19 @@ Controller::Controller()
         { GL_FRAGMENT_SHADER, "res/shaders/fragmentWater.shader", 3},
         { GL_GEOMETRY_SHADER, "res/shaders/geometryWater.shader", 3},
     };
+    std::vector<ShaderInfo> normalShaders
+    {
+        { GL_VERTEX_SHADER, "res/shaders/vertexNormal.shader", 4},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentNormal.shader", 4},
+        { GL_GEOMETRY_SHADER, "res/shaders/geometryNormal.shader", 4},
+    };
     std::vector<ShaderInfo>  skyboxShaders
     {
-        { GL_VERTEX_SHADER, "res/shaders/vertexSkybox.shader", 4},
-        { GL_FRAGMENT_SHADER, "res/shaders/fragmentSkybox.shader", 4},
+        { GL_VERTEX_SHADER, "res/shaders/vertexSkybox.shader", 5},
+        { GL_FRAGMENT_SHADER, "res/shaders/fragmentSkybox.shader", 5},
     };
 
-    m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/terrain.jpg", "res/textures/heightMap.png");
+    m_terrain = std::make_shared<Terrain>(256, 8, 8, "res/textures/terrain.jpg", "testHeightMap.png");
     m_water = std::make_shared<Water>(256, 8, 8, -2.0f);
 
     std::vector<std::string> faces{ "res/textures/right.png", "res/textures/left.png",
@@ -45,7 +51,8 @@ Controller::Controller()
     m_skybox = std::make_shared<Skybox>(faces);
 
     m_models.push_back(std::make_shared<Model>("res/actors/models/duck/Duck.gltf"));
-    std::shared_ptr<LightSource> l(std::make_shared<DirectionalLight>(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
+    std::shared_ptr<LightSource> l(std::make_shared<PointLight>(glm::vec3(1.0f, 3.0f, -2.0f), glm::vec3(-0.9f, -0.5f, 0.2f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.4f, 0.4f, 0.4f), glm::vec3(1.0f, 1.0f, 1.0f), 0.03f));
+    std::shared_ptr<LightSource> l2(std::make_shared<DirectionalLight>(glm::vec3(-0.9f, -0.5f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.2f, 0.2f, 0.2f)));
     m_renderer = Renderer(m_windowWidth, m_windowHeight, 45.0f);
     
 
@@ -55,11 +62,13 @@ Controller::Controller()
     m_lightProgram = ShaderProgram(lightShaders);
     m_terrainProgram = ShaderProgram(terrainShaders);
     m_waterProgram = ShaderProgram(waterShader);
+    m_normalProgram = ShaderProgram(normalShaders);
     m_skyboxProgram = ShaderProgram(skyboxShaders);
 
     m_gui = Gui(m_window);
 
     m_lights.push_back(l);
+    m_lights.push_back(l2);
     m_gui.addLight(m_lights[0]);
     m_gui.addModel(m_models[0]);
 
@@ -151,6 +160,10 @@ void Controller::processInput()
     {
         m_terrain->saveHeightMap("testHeightMap.png");
     }
+    if (buttonTriggered(GLFW_KEY_N))
+    {
+        m_renderer.m_drawNormals = m_renderer.m_drawNormals ? false : true;
+    }
     
 }
 
@@ -210,7 +223,7 @@ void Controller::updateGameLogic(GLFWcursorposfun funcGame, GLFWcursorposfun fun
 
     m_renderer.draw(m_terrainProgram, m_terrain, m_lights, m_camera, m_clipPlane);
 
-    m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera);
+    m_renderer.draw(m_waterProgram, m_water, m_lights, m_camera, std::make_shared<ShaderProgram>(m_normalProgram));
 
     m_renderer.draw(m_skyboxProgram, m_skybox, m_camera, m_clipPlane);
 

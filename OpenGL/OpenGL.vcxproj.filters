@@ -452,6 +452,9 @@
     <None Include="res\shaders\geometryWater.shader" />
     <None Include="res\shaders\fragmentSkybox.shader" />
     <None Include="res\shaders\vertexSkybox.shader" />
+    <None Include="res\shaders\fragmentNormal.shader" />
+    <None Include="res\shaders\vertexNormal.shader" />
+    <None Include="res\shaders\geometryNormal.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

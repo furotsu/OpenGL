@@ -65,7 +65,7 @@ void PointLight::bindUniforms(ShaderProgram& program)
 	program.SetUniform1f(("pointLights[" + number + "].quadraticIntens").c_str(), m_quadraticIntens);
 
 	this->s_pointPos++;
-	if (s_pointPos == s_pointLCount)
+	if (s_pointPos >= s_pointLCount)
 		s_pointPos = 0;
 }
 

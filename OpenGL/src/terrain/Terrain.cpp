@@ -288,7 +288,7 @@ void Terrain::loadHeightMap(std::string filepath)
 			for (int j = 0; j < m_verticesCount; j++)
 			{
 				v.Position.x = (float)i * m_width / ((float)m_verticesCount - 1.0f) - m_width / 2;
-				v.Position.y = colorToHeight(j, i, pixelsBuf);
+				v.Position.y = colorToHeight(j, i, pixelsBuf) + 2.5f;
 				v.Position.z = (float)j * m_length / ((float)m_verticesCount - 1.0f) - m_length / 2;
 
 				v.Normal.x = 0;

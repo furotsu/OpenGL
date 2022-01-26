@@ -10,6 +10,19 @@ in vec3 Normal;
 in vec2 TexCoords;
 in vec3 vColor;
 
+struct DirLight
+{
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	//vec3 specular;
+};
+
+//uniform DirLight dirLight;
+
+//vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+
 
 void main()
 {
@@ -27,3 +40,4 @@ void main()
 	*/
 	fColor = vec4(vColor + vec3(texture(texture_diffuse, TexCoords)), 1.0f);
 }
+

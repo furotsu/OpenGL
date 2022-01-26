@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     
     glStencilFunc(GL_EQUAL, 1, 0xFF);
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glClearColor(0.3f, 0.9f, 0.3f, 0.0f);
+    glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 
     while (!controller.shouldClose())
     {

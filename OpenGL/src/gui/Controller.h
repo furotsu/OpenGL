@@ -20,6 +20,7 @@ public:
     ShaderProgram m_lightProgram;
     ShaderProgram m_terrainProgram;
     ShaderProgram m_waterProgram;
+    ShaderProgram m_normalProgram;
     ShaderProgram m_skyboxProgram;
 
     int m_windowWidth;

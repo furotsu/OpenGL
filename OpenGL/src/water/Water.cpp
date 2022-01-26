@@ -93,9 +93,17 @@ void Water::draw(ShaderProgram& program)
 	glBindVertexArray(0);
 }
 
+void Water::drawNormals(std::shared_ptr<ShaderProgram>)
+{
+	glBindVertexArray(m_VAO);
+	glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_SHORT, 0);
+	glBindVertexArray(0);
+}
+
 void Water::bindFramebuffer()
 {
 	m_WFB->bindReflectionFrameBuffer();
+	//m_WFB->bindRefractionFrameBuffer();
 }
 
 void Water::unbindFramebuffer()
@@ -122,7 +130,7 @@ glm::mat4 Water::getModelMat()
 WaterFrameBuffer::WaterFrameBuffer()
 {
 	initialiseReflectionFrameBuffer();
-	//initialiseRefractionFrameBuffer();
+	initialiseRefractionFrameBuffer();
 }
 
 WaterFrameBuffer::~WaterFrameBuffer()
@@ -136,11 +144,20 @@ void WaterFrameBuffer::cleanUp()
 	glDeleteFramebuffers(1, &m_reflectionFbo);
 	glDeleteTextures(1, &m_reflectionTexture);
 	glDeleteRenderbuffers(1, &m_reflectionRbo);
+
+	glDeleteFramebuffers(1, &m_refractionFbo);
+	glDeleteTextures(1, &m_refractionTexture);
+	glDeleteRenderbuffers(1, &m_refractionRbo);
 }
 
 void WaterFrameBuffer::bindReflectionFrameBuffer()
 {
 	bindFrameBuffer(m_reflectionFbo, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+}
+
+void WaterFrameBuffer::bindRefractionFrameBuffer()
+{
+	bindFrameBuffer(m_refractionFbo, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 }
 
 void WaterFrameBuffer::bindFrameBuffer(int frameBuffer, int width, int height)
@@ -159,6 +176,11 @@ void WaterFrameBuffer::unbindCurrentFrameBuffer()
 int WaterFrameBuffer::getReflectionTexture()
 {
 	return m_reflectionTexture;
+}
+
+int WaterFrameBuffer::getRefractionTexture()
+{
+	return m_refractionTexture;
 }
 
 void WaterFrameBuffer::initialiseReflectionFrameBuffer()
@@ -190,11 +212,47 @@ void WaterFrameBuffer::initialiseReflectionFrameBuffer()
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		ERROR("WATER FRAMEBUFFER: Framebuffer is not complete");
+		ERROR("WATER FRAMEBUFFER: reflection framebuffer is not complete");
 	}
 
 	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void WaterFrameBuffer::initialiseRefractionFrameBuffer()
+{
+	//Frame buffer object color texture
+	glGenFramebuffers(1, &m_refractionFbo);
+	glGenTextures(1, &m_refractionTexture);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_refractionFbo);
+	glBindTexture(GL_TEXTURE_2D, m_refractionTexture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, REFRACTION_WIDTH, REFRACTION_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_refractionTexture, 0);
+
+	//Render buffer object for depth and stencil buffers
+	glGenRenderbuffers(1, &m_refractionRbo);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, m_refractionRbo);
+
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, REFRACTION_WIDTH, REFRACTION_HEIGHT);
+
+	//attach renderbuffer to framebuffer
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_refractionRbo);
+
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		ERROR("WATER FRAMEBUFFER: refraction framebuffer is not complete");
+	}
+
+	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 1);
 }
 
 

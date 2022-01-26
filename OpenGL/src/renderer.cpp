@@ -3,7 +3,7 @@
 #include <iostream>
 
 Renderer::Renderer(int windowWidth, int windowHeight, float fovDegrees)
-	: m_windowWidth(windowWidth), m_windowHeight(windowHeight)
+	: m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_drawNormals(false)
 {
 	m_projMat = glm::perspective(glm::radians(fovDegrees), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 }
@@ -63,17 +63,24 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Terrain> terrain, st
     terrain->draw(program);
 }
 
-void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> water, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera)
+void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> water, std::vector<std::shared_ptr<LightSource>>& lightSources, Camera& camera, std::shared_ptr<ShaderProgram> normalProgram)
 {
     glDisable(GL_CULL_FACE);
 
     program.Bind();
 
     //terrain->bindFramebuffer();
+    
+    //TODO change WFB texture to texture object
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, water->m_WFB->m_reflectionTexture);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, water->m_WFB->m_refractionTexture);
+
+    double time = glfwGetTime();
 
     //model related uniforms
-    program.SetUniform1f("u_time", glfwGetTime());
+    program.SetUniform1f("u_time", time);
 
     //camera related uniforms
     program.SetUniformMat4f("view", camera.getViewMatrix());
@@ -85,7 +92,6 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> water, std::v
 
 
     //fragment shader uniforms
-    program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 
     for (int i = 0; i != lightSources.size(); ++i)
     {
@@ -93,6 +99,23 @@ void Renderer::draw(ShaderProgram& program, std::shared_ptr<Water> water, std::v
     }
 
     water->draw(program);
+
+    if (m_drawNormals && normalProgram != nullptr)
+    {
+        normalProgram->Bind();
+
+        normalProgram->SetUniform1f("u_time", time);
+
+        normalProgram->SetUniformMat4f("view", camera.getViewMatrix());
+        normalProgram->SetUniformMat4f("projection", m_projMat);
+        glm::mat4 modelMat = water->getModelMat();
+        //normalProgram->SetUniformMat4f("model", modelMat);
+
+        program.SetUniform3f("cameraPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+
+        water->drawNormals(normalProgram);
+    }
+
 
     glEnable(GL_CULL_FACE);
 }

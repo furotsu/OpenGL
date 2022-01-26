@@ -36,6 +36,7 @@ public:
 	void generateWater();
 	void initWater();
 	void draw(ShaderProgram&);
+	void drawNormals(std::shared_ptr<ShaderProgram>);
 	void bindFramebuffer();
 	void unbindFramebuffer();
 	float getHeight(float, float);
@@ -52,35 +53,37 @@ class WaterFrameBuffer
 	const static int REFLECTION_WIDTH = 256;
 	const static int REFLECTION_HEIGHT = 256;
 
-	const static int REFRACTION_WIDTH = 1280;
-	const static int REFRACTION_HEIGHT = 720;
+	const static int REFRACTION_WIDTH = 256;
+	const static int REFRACTION_HEIGHT = 256;
 
 	unsigned int m_reflectionFbo;
+	unsigned int m_refractionFbo;
 	unsigned int m_reflectionDepthBuffer;
 
 	unsigned int m_reflectionRbo;
-
+	unsigned int m_refractionRbo;
 	//int m_refractionFrameBuffer;
 	//int m_refractionTexture;
 	//int m_refractionDepthTexture;
 
 public:
 	unsigned int m_reflectionTexture;
+	unsigned int m_refractionTexture;
 	WaterFrameBuffer();
 	~WaterFrameBuffer();
 
 	void cleanUp();
 	void bindReflectionFrameBuffer();
-	//void bindRefractionFrameBuffer();
+	void bindRefractionFrameBuffer();
 	void unbindCurrentFrameBuffer();
 
 	int getReflectionTexture();
-	//int getRefractionTexture();
+	int getRefractionTexture();
 	//int getRefractionDepthTexture();
 
 private:
 	void initialiseReflectionFrameBuffer();
-	//void initialiseRefractionFrameBuffer();
+	void initialiseRefractionFrameBuffer();
 	void bindFrameBuffer(int frameBuffer, int width, int height);
 	//void createFrameBuffer();
 	//void createTextureAttachment();

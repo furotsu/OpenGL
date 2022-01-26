@@ -16,6 +16,7 @@ in DATA
     vec3 FragColor;
     mat4 projection;
     vec2 textureCoords;
+    vec3 normal;
 } data_in[];
 
 vec3 getNormal()
@@ -33,7 +34,8 @@ void main()
         clipSpace = data_in[i].projection * gl_in[i].gl_Position;
         gl_Position = clipSpace;
         FragPos = data_in[i].FragPos;
-        Normal = getNormal();
+        //Normal = getNormal();
+        Normal = data_in[i].normal;
         FragColor = data_in[i].FragColor;
         textureCoords = data_in[i].textureCoords;
 
